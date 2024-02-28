@@ -1,16 +1,17 @@
-package com.openMarket.backend.Order;
+package com.openMarket.backend.Ordering;
 
 
+import com.openMarket.backend.Payment.Payment;
 import com.openMarket.backend.Product.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-public class Order {
+@Table(name = "ordering")
+public class Ordering {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +21,12 @@ public class Order {
 
     private int orderAmount;
 
-    @JoinColumn(name = "product_id")
     @ManyToOne
+    @JoinColumn(name = "product_id")
     private Product product;
+
+    @OneToOne(mappedBy = "ordering")
+    private Payment payment;
+
+
 }

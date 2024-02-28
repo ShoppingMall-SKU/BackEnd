@@ -1,7 +1,7 @@
 package com.openMarket.backend.OrderDetail;
 
 
-import com.openMarket.backend.Order.Order;
+import com.openMarket.backend.Ordering.Ordering;
 import com.openMarket.backend.User.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -30,12 +30,14 @@ public class OrderDetail {
 
     private String shipStatus;
 
-    @JoinColumn(name = "order_id")
-    @ManyToOne
-    private Order order;
 
-    @JoinColumn(name = "user_id")
     @ManyToOne
+    @JoinColumn(name = "ordering_id")
+    private Ordering ordering;
+
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
 }

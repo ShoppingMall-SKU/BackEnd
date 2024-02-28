@@ -1,17 +1,17 @@
 package com.openMarket.backend.Payment;
 
 
-import com.openMarket.backend.Order.Order;
+import com.openMarket.backend.Ordering.Ordering;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.aspectj.weaver.ast.Or;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
+@Table(name = "payment")
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +24,6 @@ public class Payment {
     private LocalDateTime paymentDate;
 
     @OneToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @JoinColumn(name = "ordering_id")
+    private Ordering ordering;
 }

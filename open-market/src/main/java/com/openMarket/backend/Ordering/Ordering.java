@@ -1,32 +1,36 @@
 package com.openMarket.backend.Ordering;
 
 
-import com.openMarket.backend.Payment.Payment;
-import com.openMarket.backend.Product.Product;
+import com.openMarket.backend.User.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
-@Table(name = "ordering")
 public class Ordering {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private int orderQuantity;
+    private String receiverName;
 
-    private int orderAmount;
+    private String receiverPhone;
 
+    private String receiverAddress;
+
+    private String message;
+
+    private LocalDateTime orderDate;
+
+    private int totalPrice;
+
+    @JoinColumn(name = "user_id")
     @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
-
-    @OneToOne(mappedBy = "ordering")
-    private Payment payment;
-
+    private User user;
 
 }

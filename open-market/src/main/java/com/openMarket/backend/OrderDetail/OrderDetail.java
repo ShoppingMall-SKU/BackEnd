@@ -2,12 +2,10 @@ package com.openMarket.backend.OrderDetail;
 
 
 import com.openMarket.backend.Ordering.Ordering;
-import com.openMarket.backend.User.User;
+import com.openMarket.backend.Product.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -18,26 +16,18 @@ public class OrderDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private LocalDateTime orderDate;
-
-    private String receiverName;
-
-    private String receiverPhone;
-
-    private String receiverAddress;
-
-    private String message;
-
     private String shipStatus;
 
-
+    @JoinColumn(name = "order_id")
     @ManyToOne
-    @JoinColumn(name = "ordering_id")
     private Ordering ordering;
 
-
+    @JoinColumn(name = "product_id")
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private Product product;
+
+    private int quantity;
+
+    private int price;
 
 }

@@ -48,27 +48,41 @@ public class ProductService {
             throw new RuntimeException("Data Not Found");
         }
     }
-    public List<Product> getAll(){
+    public List<Product> getAll(){ // 전체 조회
         return productRepository.findAll();
     }
+
     public List<Product> searchByName(String name){ // 검색기능
-        List<Product> products = this.productRepository.findAll();
-        products.removeIf(s->!s.getName().contains(name));
-        return products;
+        return this.productRepository.findByNameContaining(name);
+    }
+    // brand 별 상품 찾기
+    public List<Product> getByBrand(String brand){
+        return this.productRepository.findByBrand(brand);
     }
 
     // Update Product
     // User 추가하여 인증 수정해야함
-    public void modifiedProduct(Product product, String name, String img, int price){
+    public void modifiedProduct(Product product, String name, String img, int price, int stock){
         product.setName(name);
         product.setImg(img);
         product.setPrice(price);
-
+        product.setStock(modifiedStock(stock));
         this.productRepository.save(product);
     }
+
+    // 할인율 변경
     public void modifiedSale(Product product, int sale){
         product.setSale(sale);
         this.productRepository.save(product);
+    }
+
+    // 수량 변경
+    public int modifiedStock(int stock){
+        if(stock >= 0){
+            return stock;
+        }else{
+            throw new RuntimeException("음수는 불가능 합니다.");
+        }
     }
     // Delete Product
     public void deleteProduct(Product product){

@@ -2,12 +2,14 @@ package com.openMarket.backend.Ordering;
 
 
 import com.openMarket.backend.JWT.JwtService;
+import com.openMarket.backend.Security.SecurityConfig;
 import com.openMarket.backend.User.User;
 import com.openMarket.backend.User.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,15 +34,17 @@ public class OrderingController {
                 infoDTO.getReceiverAddress(),
                 infoDTO.getMessage()
         );
-
     }
 
-    @GetMapping("/list/{username}")
-    public ResponseEntity<List<Ordering>> getListByUser(HttpServletRequest request, @PathVariable String username){
-        User user = userRepository.findByName(username).orElse(null);
+    @GetMapping("/list/{email}")
+    public ResponseEntity<List<OrderingListDTO>> getListByUser(@PathVariable String email){
+        String nowEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!email.equals(nowEmail))
+            return ResponseEntity.badRequest().body(null);
+        User user = userRepository.findByEmail(email).orElseThrow();
+        log.info(SecurityContextHolder.getContext().getAuthentication().getName());
 
         return ResponseEntity.ok(orderingService.getOrderingByUser(user));
 
     }
-
 }

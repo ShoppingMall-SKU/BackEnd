@@ -6,6 +6,7 @@ import com.openMarket.backend.Product.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,8 +34,19 @@ public class OrderDetailService {
         return this.orderDetailRepository.findById(id).orElse(null);
     }
 
-    public List<OrderDetail> getOrderDetailByOrdering(Ordering ordering) {
-        return this.orderDetailRepository.findByOrdering(ordering);
+    public List<OrderDetailDTO> getOrderDetailByOrdering(Ordering ordering) {
+        List<OrderDetailDTO> list = new ArrayList<>();
+        List<OrderDetail> orderDetailList = this.orderDetailRepository.findByOrdering(ordering);
+
+        for (OrderDetail od : orderDetailList) {
+            OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+            orderDetailDTO.setProductName(od.getProduct().getName());
+            orderDetailDTO.setQuantity(od.getQuantity());
+            orderDetailDTO.setPrice(od.getPrice());
+            orderDetailDTO.setShipStatus(od.getShipStatus());
+            list.add(orderDetailDTO);
+        }
+        return list;
     }
 
     public void updateShipStatus(OrderDetail orderDetail, String status) {

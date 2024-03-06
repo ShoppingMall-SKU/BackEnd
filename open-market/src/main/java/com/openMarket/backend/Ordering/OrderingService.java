@@ -3,12 +3,15 @@ package com.openMarket.backend.Ordering;
 
 import com.openMarket.backend.Cart.Cart;
 import com.openMarket.backend.Cart.CartRepository;
+import com.openMarket.backend.OrderDetail.OrderDetail;
 import com.openMarket.backend.OrderDetail.OrderDetailService;
 import com.openMarket.backend.User.User;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -48,8 +51,20 @@ public class OrderingService {
 
     }
 
-    public List<Ordering> getOrderingByUser(User user) {
-        return this.orderingRepository.findByUser(user);
+    public List<OrderingListDTO> getOrderingByUser(User user) {
+        List<Ordering> list = orderingRepository.findByUser(user);
+        List<OrderingListDTO> res = new ArrayList<>();
+
+        for(Ordering o : list) {
+            OrderingListDTO orderingListDTO = new OrderingListDTO();
+            orderingListDTO.setUserEmail(o.getUser().getEmail());
+            orderingListDTO.setTotalPrice(o.getTotalPrice());
+            orderingListDTO.setList(orderDetailService.getOrderDetailByOrdering(o));
+            res.add(orderingListDTO);
+
+        }
+
+        return res;
     }
 
 

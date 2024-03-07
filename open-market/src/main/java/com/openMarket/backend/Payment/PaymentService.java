@@ -35,12 +35,19 @@ public class PaymentService {
     public Payment getPaymentByOrderingId(int orderingId){
         return this.paymentRepository.findPaymentByOrderingId(orderingId);
     }
-    // userId로 Payment list 반환 -> 쿼리문 작성 필요
+    // userId로 Payment list 반환 -> 쿼리문 작성 (Test 필요)
     public List<Payment> getPaymentListByUserId(int userId){
         return this.paymentRepository.findPaymentByUserId(userId);
     }
 
     // Payment Update -> 필요한가??
+    public void modifiedPayment(Payment payment, String method, int amount, Ordering ordering){
+        payment.setMethod(method);
+        payment.setAmount(amount);
+        payment.setOrdering(ordering);
+
+        paymentRepository.save(payment);
+    }
     // Payment Delete -> 관리자가 필요
     public void deletePayment(Payment payment){
         paymentRepository.delete(payment);

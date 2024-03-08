@@ -12,14 +12,14 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Table(name = "payment")
-public class Payment {
+public class Payments {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String method;
 
-    private int amount;
+    private int amount; // 배송비 포함 가격
 
     private LocalDateTime paymentDate;
 

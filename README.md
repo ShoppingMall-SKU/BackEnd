@@ -1,7 +1,7 @@
 # Meal-Kit
 
 ## 1. 프로젝트 소개
-### Meal-Kit (2024.02.04 ~ )
+### Meal-Kit (2024.02.28 ~ )
 <p text-align='center'> 밀키트 판매하는 쇼핑몰 <br/>
 </p>
 

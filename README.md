@@ -9,7 +9,7 @@
 
   | 조승현<br>(FE) | 문환희<br>(BE) | 최동석<br>(BE) |
   |:--------:| :--------: | :--------: |
-  | <img src=https://avatars.githubusercontent.com/u/161564888?v=4" alt="조승현" width="200" height="200"> | <img src="https://github.com/tjtmddk720/Gennet/assets/83910139/900644a6-6463-4157-ac2b-081f40037e4e" alt="문환희" width="200" height="200"> |  <img src="https://avatars.githubusercontent.com/u/96916609?v=4" alt="최동석" width="200" height="200"> | | 
+  | <img src="https://github.com/tjtmddk720/Gennet/assets/83910139/900644a6-6463-4157-ac2b-081f40037e4e" alt="조승현" width="200" height="200">  | <img src="https://github.com/tjtmddk720/Gennet/assets/83910139/900644a6-6463-4157-ac2b-081f40037e4e" alt="문환희" width="200" height="200"> |  <img src="https://avatars.githubusercontent.com/u/96916609?v=4" alt="최동석" width="200" height="200"> | | 
   |[@sprout2744](https://github.com/sprout2744) | [@HwanheeMoon](https://github.com/HwanheeMoon) |[@eastwest9](https://github.com/eastwest9) |
   | <p align="left">- Front End <br/>| <p align="left">- User <br/>- Ordering <br/>- OrderDetail <br/></p> | <p align="left">- Payment <br/>- Cart <br/>- Product <br/></p> |
 

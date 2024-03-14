@@ -1,8 +1,8 @@
 package com.openMarket.backend.Ordering;
 
 
-import com.openMarket.backend.JWT.JwtService;
-import com.openMarket.backend.Security.SecurityConfig;
+
+//import com.openMarket.backend.Security.SecurityConfig;
 import com.openMarket.backend.User.User;
 import com.openMarket.backend.User.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +21,7 @@ import java.util.List;
 public class OrderingController {
     private final OrderingService orderingService;
     private final UserRepository userRepository;
-    private final JwtService jwtService;
+
 
     @PostMapping("/create") // 결제 전 정보 기입.
     public void create(HttpServletRequest request, @RequestParam OrderingInfoDTO infoDTO) {

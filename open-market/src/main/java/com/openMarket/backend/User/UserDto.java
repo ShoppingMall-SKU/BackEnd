@@ -1,27 +1,36 @@
 package com.openMarket.backend.User;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-public class UserDto {
+@Getter
+@Setter
+public class UserDTO {
+    @NotBlank(message = "이름은 필수 입력 사항 입니다.")
+    private String name;
 
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class GetResponseDto{
-        private String name; // 성명
+    @NotBlank(message = "비밀번호를 입력하십시오.")
+    private String password;
 
-        private String password; //비번
+    private String phone;
 
-        private String phone; // ex)010-1234-5678
+    @NotBlank(message = "이메일을 입력하십시오.")
+    @Email(message = "올바른 이메일 형식이 아닙니다.")
+    private String email;
 
-        private String email; // id
+    private String address;
 
-        private String address; // 주소
-
-        private User.role role;
+    @JsonCreator
+    public UserDTO (User user) {
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+        this.address = user.getAddress();
+        this.phone = user.getPhone();
     }
+
 }

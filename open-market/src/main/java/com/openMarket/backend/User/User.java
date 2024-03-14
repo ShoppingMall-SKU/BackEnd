@@ -31,7 +31,6 @@ public class User {
     public enum role {
         ROLE_USER("사용자"),
         ROLE_ADMIN("관리자");
-
         private String role;
 
         role(String role) {this.role = role;}

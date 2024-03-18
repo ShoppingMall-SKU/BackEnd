@@ -66,12 +66,7 @@ public class SecurityConfig {
 
 
                 .addFilterAfter(new JwtFilter(jwtService, redisConfig), UsernamePasswordAuthenticationFilter.class)
-                .cors(cors -> cors.configurationSource(request -> {
-                CorsConfiguration configuration = new CorsConfiguration();
-                configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-                configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE"));
-                return configuration;
-            }));
+                .cors(cors -> cors.configurationSource(request -> corsConfigurationSource().getCorsConfiguration(request)));
 
 
         return http.build();
@@ -116,6 +111,7 @@ public class SecurityConfig {
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
+        configuration.setExposedHeaders(List.of("Authorization")); // 없어도 무방할거 같은데
 
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

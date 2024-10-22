@@ -24,10 +24,17 @@ jobs:
       - name: List directories
         run: |
           ls -la
+          
+      - name: Print current working directory
+        run: |
+          pwd
+
 
       - name: make application.properties
         run: |
-          cd src/main/resources
+          cd src/main
+          mkdir resources
+          cd resources
           touch ./application.properties
           echo "${{ secrets.APPLICATION_PROD }}" > ./application.properties
 
@@ -45,11 +52,12 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/mealkit:latest
 
       - name: Deploy
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }} # EC2 인스턴스 퍼블릭 DNS
-          username: ec2-user
+          username: ubuntu
           key: ${{ secrets.PRIVATE_KEY }} # pem 키
+          port: ${{ secrets.PORT }}
           # 도커 작업
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/mealkit:latest
@@ -58,5 +66,5 @@ jobs:
             docker rm $(docker ps --filter 'status=exited' -a -q)
             docker image prune -a -f
 
-      - name: Generate and submit dependency graph
-        uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+      # - name: Generate and submit dependency graph
+      #   uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0

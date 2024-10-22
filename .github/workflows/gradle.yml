@@ -12,6 +12,9 @@ on:
     branches: [ "release" ]
   pull_request:
     branches: [ "release" ]
+    
+permissions:
+  contents: read
 
 jobs:
   build:

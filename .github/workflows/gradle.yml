@@ -55,7 +55,7 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }} # EC2 인스턴스 퍼블릭 DNS
-          username: ec2-user
+          username: ubuntu
           key: ${{ secrets.PRIVATE_KEY }} # pem 키
           port: ${{ secrets.PORT }}
           # 도커 작업

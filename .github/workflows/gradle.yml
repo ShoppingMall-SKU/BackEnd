@@ -24,6 +24,11 @@ jobs:
       - name: List directories
         run: |
           ls -la
+          
+      - name: Print current working directory
+        run: |
+          pwd
+
 
       - name: make application.properties
         run: |

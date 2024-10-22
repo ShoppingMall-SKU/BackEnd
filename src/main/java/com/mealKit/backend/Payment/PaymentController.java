@@ -1,6 +1,7 @@
 package com.mealKit.backend.Payment;
 
 import com.siot.IamportRestClient.IamportClient;
+import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 import java.io.IOException;
@@ -56,7 +57,7 @@ public class PaymentController {
     }
     // imp_uid(결제 고유 ID) 값을 받아 결제 상세 내역을 조회하는 함수
     @PostMapping("/payment/{imp_uid}")
-    public IamportResponse<Payment> validateIamport(@PathVariable String imp_uid){
+    public IamportResponse<Payment> validateIamport(@PathVariable String imp_uid) throws IamportResponseException, IOException {
         IamportResponse<Payment> payment = iamportClient.paymentByImpUid(imp_uid);
         log.info("결제 요청 응답. 결제 내역 - 주문 번호 : {}",payment.getResponse().getMerchantUid());
         return payment;

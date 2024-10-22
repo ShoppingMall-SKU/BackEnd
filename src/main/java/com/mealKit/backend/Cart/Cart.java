@@ -2,7 +2,6 @@ package com.mealKit.backend.Cart;
 
 
 import com.mealKit.backend.Product.Product;
-import com.openMarket.backend.Product.*;
 import com.mealKit.backend.User.User;
 import jakarta.persistence.*;
 import lombok.Getter;

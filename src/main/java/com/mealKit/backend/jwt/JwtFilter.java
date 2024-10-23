@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,16 +31,31 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final RedisConfig redisConfig;
+    //private final JwtUtil jwtUtil;
 
     public JwtFilter(JwtService jwtService, RedisConfig redisConfig) {
-        this.redisConfig = redisConfig;
+        //this.jwtUtil = jwtUtil;
         this.jwtService = jwtService;
+        this.redisConfig = redisConfig;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         String token = resolveToken(request);
         log.info("uri : {}", request.getRequestURI());
+
+        /*
+        String requestUri = request.getRequestURI();
+
+        if (requestUri.matches("^\\/login(?:\\/.*)?$")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        if (requestUri.matches("^\\/oauth2(?:\\/.*)?$")) {
+            filterChain.doFilter(request,response);
+            return;
+        }
+         */
 
         if (request.getRequestURI().equals(NO_CHECK_URL) || request.getRequestURI().equals(NO_CHECK_URL2) || request.getRequestURI().contains(NO_CHECK_URL3)){
             filterChain.doFilter(request, response);

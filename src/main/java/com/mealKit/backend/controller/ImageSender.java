@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class ImageSender {
     // 자기 컴퓨터의 파일 시스템의 경로에 따라서 절대경로로 전송.
-    private final String filesLocation = "/Users/hwanh2_/Desktop/Sptring Project/Open_Market-main/open-market/src/main/resources/static/images/";
+    //private final String filesLocation = "/Users/hwanh2_/Desktop/Sptring Project/Open_Market-main/open-market/src/main/resources/static/images/";
 
-    @RequestMapping("/{img}")
-    public ResponseEntity<?> imageSend(@PathVariable String img) {
-        String path = filesLocation + img;
-        Resource resource = new FileSystemResource(path);
-        return ResponseEntity.ok(resource);
-    }
+//    @RequestMapping("/{img}")
+//    public ResponseEntity<?> imageSend(@PathVariable String img) {
+//        String path = filesLocation + img;
+//        Resource resource = new FileSystemResource(path);
+//        return ResponseEntity.ok(resource);
+//    }
 }

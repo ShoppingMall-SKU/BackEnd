@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 public class CartUserInfoDto {
     private String userEmail;
     private Product product;
-    private int quantity;
+    private Integer quantity;
 }

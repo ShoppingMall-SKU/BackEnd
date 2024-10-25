@@ -1,7 +1,6 @@
 package com.mealKit.backend.controller;
 
 
-import com.mealKit.backend.oauth2.OAuth2UserService;
 import com.mealKit.backend.dto.UserDTO;
 import com.mealKit.backend.dto.UserLoginDTO;
 import com.mealKit.backend.service.UserService;
@@ -22,7 +21,7 @@ import java.io.UnsupportedEncodingException;
 @Slf4j
 public class UserController {
     private final UserService userService;
-    private final OAuth2UserService oAuth2UserService;
+    //private final OAuth2UserService oAuth2UserService;
 
     @PostMapping("/signup")
     public void signUp(@RequestBody UserDTO userDTO) {
@@ -46,11 +45,14 @@ public class UserController {
     }
 
 
+    /*
     @GetMapping("/redis/check")
     public void checkRedis(HttpServletRequest request) {
         userService.checkRedisValue(request);
     }
+     */
 
+    /*
     @PostMapping("/login")
     public ResponseEntity<String> login(HttpServletResponse response, @RequestBody UserLoginDTO userLoginDTO) throws UnsupportedEncodingException {
         //log.info("id : {}, pw : {}" , userLoginDTO.getEmail(), userLoginDTO.getPassword());
@@ -61,11 +63,16 @@ public class UserController {
         response.setHeader("Authorization", "Bearer " + accessToken);
         return ResponseEntity.ok("login success");
     }
+
+     */
+    /*
     @GetMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
         userService.logout(request);
         return ResponseEntity.ok("logout success");
     }
+
+     */
 
     @DeleteMapping("/{name}")
     public void deleteUser(@PathVariable String name) {

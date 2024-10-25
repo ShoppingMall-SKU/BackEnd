@@ -1,10 +1,9 @@
 package com.mealKit.backend.service;
 
-import com.mealKit.backend.jwt.JwtService;
+import com.mealKit.backend.domain.enums.UserRole;
 import com.mealKit.backend.jwt.JwtToken;
 import com.mealKit.backend.redis.RedisConfig;
 import com.mealKit.backend.domain.User;
-import com.mealKit.backend.domain.User.role;
 import com.mealKit.backend.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -30,9 +29,9 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final JwtService jwtService;
+
     private final BCryptPasswordEncoder encoder;
-    private final RedisConfig redisConfig;
+    //private final RedisConfig redisConfig;
 
     public void signUp (String name, String password, String phone, String email, String address) {
 
@@ -51,6 +50,7 @@ public class UserService {
 //    }
 
 
+    /*
     public String login(String email, String pw) {
         log.info("로그인 시도 : {}",email);
         User user = userRepository.findByEmail(email).orElse(null);
@@ -73,9 +73,12 @@ public class UserService {
         return token.getAccessToken();
 
     }
+    */
 
+
+    /*
     public void logout(HttpServletRequest request) {
-        String accessToken = jwtService.extractAccessToken(request);
+        String accessToken = jwt.extractAccessToken(request);
         if (!jwtService.validateToken(accessToken))
             throw new RuntimeException("invalid way");
         String email = jwtService.getEmailFromToken(accessToken);
@@ -84,13 +87,18 @@ public class UserService {
         redisConfig.redisTemplate().delete(email);
         log.info(redisConfig.redisTemplate().opsForValue().get(email));
     }
+    */
 
 
 
+
+    /*
     public void checkRedisValue(HttpServletRequest request) {
         String accessToken = jwtService.extractAccessToken(request);
         log.info("redis : {}", redisConfig.redisTemplate().opsForValue().get(accessToken));
     }
+    */
+
 
     public void delete (User user) {
         userRepository.delete(user);
@@ -126,7 +134,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public List<User> readByRole(role role) {
+    public List<User> readByRole(UserRole role) {
         return userRepository.findByRole(role);
     }
 

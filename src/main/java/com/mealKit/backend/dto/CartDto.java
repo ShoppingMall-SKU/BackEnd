@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class CartDto {
-    private int quantity;
+    private Integer quantity;
     private User user;
     private Product product;
 }

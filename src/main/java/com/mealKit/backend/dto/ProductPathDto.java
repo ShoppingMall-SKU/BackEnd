@@ -18,13 +18,13 @@ public class ProductPathDto {
 
     private String detail;
 
-    private int price;
+    private Integer price;
 
     private String img;
 
-    private int sale;
+    private Integer sale;
 
-    private int stock;
+    private Integer stock;
 
 
     private LocalDateTime create_date;

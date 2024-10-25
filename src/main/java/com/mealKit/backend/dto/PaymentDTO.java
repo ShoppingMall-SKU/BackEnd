@@ -13,7 +13,7 @@ public class PaymentDTO {
 
     private String method;
 
-    private int amount;
+    private Integer amount;
 
     private Ordering ordering;
 }

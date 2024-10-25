@@ -1,6 +1,8 @@
-package com.mealKit.backend.oauth2;
+package com.mealKit.backend.dto;
 
+import com.mealKit.backend.domain.User;
 import com.mealKit.backend.dto.UserDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -8,14 +10,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+
 public class CustomOAuth2User implements OAuth2User {
 
-    private final UserDTO userDTO;
+    private final User user;
 
-    public CustomOAuth2User(UserDTO userDTO){
-        this.userDTO = userDTO;
+    public CustomOAuth2User(User user){
+        this.user = user;
     }
 
+    // 구글, 네이버 형식이 달라 사용하기 힘들어 직접 구현
     @Override
     public Map<String, Object> getAttributes() {
         return null;
@@ -28,7 +32,7 @@ public class CustomOAuth2User implements OAuth2User {
         collection.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return userDTO.getRole();
+                return user.getRole().name();
             }
         });
 
@@ -37,10 +41,12 @@ public class CustomOAuth2User implements OAuth2User {
 
     @Override
     public String getName() {
-        return userDTO.getName();
+        return user.getName();
     }
 
-    public String getUsername() {
-        return userDTO.getUsername();
+    public String getPid() {
+        return user.getPid();
     }
+
+    public String getProviderType() { return user.getProviderType().name();}
 }

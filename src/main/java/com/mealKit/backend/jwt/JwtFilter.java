@@ -2,13 +2,14 @@ package com.mealKit.backend.jwt;
 
 
 import com.mealKit.backend.domain.User;
-import com.mealKit.backend.redis.RedisConfig;
+import com.mealKit.backend.dto.CustomOAuth2User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Component
 public class JwtFilter extends OncePerRequestFilter {
 
     private static final List<String> NO_CHECK_LIST = new ArrayList<>();
@@ -29,67 +29,67 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private static final String NO_CHECK_URL3 = "/api/product";
 
-    private final JwtService jwtService;
-    private final RedisConfig redisConfig;
-    //private final JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
-    public JwtFilter(JwtService jwtService, RedisConfig redisConfig) {
-        //this.jwtUtil = jwtUtil;
-        this.jwtService = jwtService;
-        this.redisConfig = redisConfig;
+    public JwtFilter(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        String token = resolveToken(request);
-        log.info("uri : {}", request.getRequestURI());
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        /*
-        String requestUri = request.getRequestURI();
-
-        if (requestUri.matches("^\\/login(?:\\/.*)?$")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        if (requestUri.matches("^\\/oauth2(?:\\/.*)?$")) {
-            filterChain.doFilter(request,response);
-            return;
-        }
-         */
-
-        if (request.getRequestURI().equals(NO_CHECK_URL) || request.getRequestURI().equals(NO_CHECK_URL2) || request.getRequestURI().contains(NO_CHECK_URL3)){
-            filterChain.doFilter(request, response);
-        }
-        else {
-            //log.info("토큰 확인중... {}", token);
-            String email = jwtService.getEmailFromToken(token);
-
-            if (jwtService.validateToken(token) && redisConfig.redisTemplate().opsForValue().get(email) != null) {
-                Authentication authentication = jwtService.getAuthentication(token);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                log.info("유저 : {}", email);
-                log.info("토큰 인증 성공");
-                filterChain.doFilter(request, response);
-            } else if (!jwtService.validateToken(token) && email != null) { // access token 만료
-                String refreshToken = redisConfig.redisTemplate().opsForValue().get(email);
-                if (jwtService.validateToken(refreshToken)) { // refreh token 검증
-                    String reIssuedToken = jwtService.generateAccessToken(email, User.role.ROLE_USER);
-                    Authentication authentication = jwtService.getAuthentication(reIssuedToken);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    response.setHeader("Authorization","Bearer " + reIssuedToken);
-                    log.info("액세스 토큰 자동 재생성");
-                    filterChain.doFilter(request, response);
-                } else {
-                    log.info("토큰 인증 실패");
-                    SecurityContextHolder.getContext().setAuthentication(null);
-                    filterChain.doFilter(request, response);
-                }
-            } else {
-                log.info("토큰 인증 실패");
-                filterChain.doFilter(request, response);
+        // cookie들을 불러온 뒤 Authorization Key에 담긴 쿠키를 찾음
+        String authorization = null;
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            System.out.println("cookie name : " + cookie.getName());
+            if (cookie.getName().equals("Authorization")) {
+                authorization = cookie.getValue();
             }
         }
-        //filterChain.doFilter(request, response);
+
+        // Authorization 헤더 검증
+        if (authorization == null) {
+            System.out.println("token null" + request.getRequestURI());
+            filterChain.doFilter(request, response);
+
+            return;
+        }
+
+        System.out.println("end?");
+        // 토큰
+        String token = authorization;
+
+        // 토큰 소멸 시간 검증
+        if (jwtUtil.isExpired(token)) {
+
+            System.out.println("token expired");
+            filterChain.doFilter(request,response);
+
+            return;
+        }
+
+        //토큰에서 pid, role 획득
+        String pid = jwtUtil.getPid(token);
+        String role = jwtUtil.getRole(token);
+
+        // user를 생성하여 값 set
+        User user = User.builder()
+                .pid(pid)
+                .role(role)
+                .build();
+
+        // UserDetails에 회원 정보 객체 담기
+        CustomOAuth2User customOAuth2User = new CustomOAuth2User(user);
+
+        // 스프링 시큐리티 인증 토큰 생성
+        Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, "", customOAuth2User.getAuthorities());
+
+        // 세션에 사용자 등록
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        filterChain.doFilter(request,response);
+
     }
 
     private String resolveToken(HttpServletRequest request) {

@@ -11,8 +11,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import java.util.Collections;
@@ -24,6 +26,11 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
     private final JwtUtil jwtUtil;
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -40,24 +47,33 @@ public class SecurityConfig {
         http
                 .httpBasic((auth) -> auth.disable());
 
+        // 세션 설정 : stateless
+        http
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        //JWTFilter 추가
+        http
+                .addFilterAfter(new JwtFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class);
+
+
         // OAuth2
         http
                 .oauth2Login((oauth2) -> oauth2
+                        .successHandler(customSuccessHandler)
+                        .loginProcessingUrl("/login")
                         .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService))
-                                .successHandler(customSuccessHandler)
                 );
 
         // 경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                    .requestMatchers("/").permitAll()
+                    .requestMatchers("/oauth2/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/login/**").permitAll()
                         .anyRequest().authenticated());
 
-        // 세션 설정 : stateless
-        http
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         // CORS 설정
         http
@@ -78,11 +94,7 @@ public class SecurityConfig {
                     }
                 }));
 
-        // Jwt Filter 추가
-        /*
-        http
-                .addFilterAfter(new JwtFilter(), OAuth2LoginAuthenticationFilter.class);
-        */
+
         return http.build();
     }
 }

@@ -1,6 +1,8 @@
 package com.mealKit.backend.domain;
 
 
+import com.mealKit.backend.domain.enums.ProviderType;
+import com.mealKit.backend.domain.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
@@ -16,7 +18,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String username;
+    private String pid;
+
     @Setter
     @Column(name = "name")
     private String name;
@@ -36,42 +39,23 @@ public class User {
 
     @Column(name = "role")
     @Enumerated(value = EnumType.STRING)
-    private role role;
-
-    public enum role {
-        ROLE_USER("사용자"),
-        ROLE_ADMIN("관리자");
-        private String role;
-
-        role(String role) {this.role = role;}
-    }
+    private UserRole role;
 
     private String refreshToken;
 
-    //private providerType providerType;
-
-    public enum providerType {
-        GOOGLE("구글"),
-        NORMAL("일반");
-
-        private String pt;
-
-        providerType(String providerType) {
-            this.pt = providerType;
-        }
-
-        public String getProviderType() {
-            return this.pt;
-        }
-    }
+    @Column(name = "providertype")
+    @Enumerated(value = EnumType.STRING)
+    private ProviderType providerType;
 
     @Builder
-    public User(String name, String password, String phone, String email, String address, User.role role) {
+    public User(String pid, String name, String password, String phone, String email, String address, String role, String providerType) {
+        this.pid = pid;
         this.name = name;
         this.password = password;
         this.phone = phone;
         this.email = email;
         this.address = address;
-        this.role = role;
+        this.role = UserRole.toEntity(role);
+        this.providerType = ProviderType.toEntity(providerType);
     }
 }

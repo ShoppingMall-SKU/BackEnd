@@ -1,9 +1,10 @@
 package com.mealKit.backend.oauth2;
 
 import com.mealKit.backend.domain.User;
-import com.mealKit.backend.dto.GoogleResponse;
-import com.mealKit.backend.dto.OAuth2Response;
-import com.mealKit.backend.dto.UserDTO;
+import com.mealKit.backend.domain.enums.UserRole;
+import com.mealKit.backend.dto.CustomOAuth2User;
+import com.mealKit.backend.exception.CommonException;
+import com.mealKit.backend.exception.ErrorCode;
 import com.mealKit.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -20,48 +21,33 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        System.out.println(oAuth2User);
+        OAuth2User oAuth2User = super.loadUser(userRequest);
+        System.out.println("oAuth2User" + oAuth2User);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        OAuth2Response oAuth2Response = null;
+        final OAuth2Response oAuth2Response;
 
         if (registrationId.equals("google")){
             oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
         }else {
-            return null;
+            throw new CommonException(ErrorCode.AUTH_SERVER_USER_INFO_ERROR);
         }
 
-        String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
-        User existData = userRepository.findByUsername(username);
-
-        if (existData == null){
-            User user = User.builder()
-                            .email(oAuth2Response.getEmail()).
-                            name(oAuth2Response.getName()).
-                            role(User.role.ROLE_USER).build();
-            userRepository.save(user);
-
-            UserDTO userDTO = new UserDTO();
-            userDTO.setUsername(username);
-            userDTO.setName(oAuth2Response.getName());
-            userDTO.setRole("ROLE_USER");
-
-            return new CustomOAuth2User(userDTO);
-        }else{
-            existData.setEmail(oAuth2Response.getEmail());
-            existData.setName(oAuth2Response.getName());
-
-            userRepository.save(existData);
-
-            UserDTO userDTO = new UserDTO();
-            userDTO.setUsername(existData.getUsername());
-            userDTO.setName(oAuth2Response.getName());
-            userDTO.setRole(existData.getRole().toString());
-
-            return new CustomOAuth2User(userDTO);
-        }
-
+        String pid = oAuth2Response.getProvider()+" "+oAuth2Response.getProviderId();
+        return new CustomOAuth2User(
+                userRepository.findByPid(pid)
+                .orElseGet(
+                        () -> {
+                            User user = User.builder()
+                                    .pid(pid)
+                                    .email(oAuth2Response.getEmail())
+                                    .name(oAuth2Response.getName())
+                                    .role("ROLE_USER")
+                                    .build();
+                            userRepository.save(user);
+                            return user;
+                        }
+                ));
     }
 }

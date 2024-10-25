@@ -1,5 +1,6 @@
 package com.mealKit.backend.oauth2;
 
+import com.mealKit.backend.dto.CustomOAuth2User;
 import com.mealKit.backend.jwt.JwtUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -27,14 +28,18 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // OAuth2User
         CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
 
-        String username = customUserDetails.getUsername();
+        String pid = customUserDetails.getPid();
+        String pt = customUserDetails.getProviderType();
+        System.out.println("pid" + pid);
+        System.out.println("pt" + pt);
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(username, role, 60*60*60L);
+        String token = jwtUtil.createJwt(pid, role, 60*60*60L);
+        response.addCookie(createCookie("Authorization", token));
         response.sendRedirect("http://localhost:3000/");
     }
 

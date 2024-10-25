@@ -2,6 +2,7 @@ package com.mealKit.backend.oauth2;
 
 
 import com.mealKit.backend.domain.User;
+import com.mealKit.backend.domain.enums.UserRole;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -32,13 +33,12 @@ public class OAuth2Attribute {
     }
 
     public User toEntity() {
-
         return User
                 .builder()
                 .email(email)
                 .name(name)
                 .password("")
-                .role(User.role.ROLE_USER)
+                .role(UserRole.ROLE_USER.toString())
                 .build();
     }
 }

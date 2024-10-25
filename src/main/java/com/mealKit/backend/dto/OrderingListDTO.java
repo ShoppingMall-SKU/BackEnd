@@ -13,6 +13,6 @@ import java.util.List;
 public class OrderingListDTO {
     private String userEmail;
     private List<OrderDetailDTO> list;
-    private int totalPrice;
+    private Integer totalPrice;
 
 }

@@ -1,4 +1,4 @@
-package com.mealKit.backend.dto;
+package com.mealKit.backend.oauth2;
 
 import java.util.Map;
 
@@ -12,7 +12,7 @@ public class GoogleResponse implements OAuth2Response{
 
     @Override
     public String getProvider() {
-        return "google";
+        return "GOOGLE";
     }
 
     @Override

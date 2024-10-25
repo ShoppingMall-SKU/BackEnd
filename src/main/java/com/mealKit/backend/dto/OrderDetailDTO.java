@@ -13,7 +13,7 @@ public class OrderDetailDTO {
 
     private String ShipStatus;
 
-    private int quantity;
+    private Integer quantity;
 
-    private int price;
+    private Integer price;
 }

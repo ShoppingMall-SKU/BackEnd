@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Entity
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "Cart")
+@Table(name = "cart")
 @DynamicUpdate
 public class Cart {
 

@@ -2,13 +2,16 @@ package com.mealKit.backend.jwt;
 
 
 import com.mealKit.backend.domain.User;
+import com.mealKit.backend.domain.enums.UserRole;
 import com.mealKit.backend.dto.CustomOAuth2User;
+import com.mealKit.backend.security.Constant;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.Filter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -37,6 +41,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        log.info(request.getRequestURI());
+        if(Arrays.stream(Constant.allowedUrls).toList().contains(request.getRequestURI())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // cookie들을 불러온 뒤 Authorization Key에 담긴 쿠키를 찾음
         String authorization = null;
@@ -76,7 +85,7 @@ public class JwtFilter extends OncePerRequestFilter {
         // user를 생성하여 값 set
         User user = User.builder()
                 .pid(pid)
-                .role(role)
+                .role(UserRole.toEntity(role))
                 .build();
 
         // UserDetails에 회원 정보 객체 담기

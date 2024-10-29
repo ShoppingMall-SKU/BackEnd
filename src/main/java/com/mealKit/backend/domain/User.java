@@ -9,7 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "User")
+@Table(name = "user")
 @Getter
 @DynamicUpdate
 public class User {
@@ -41,6 +41,7 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private UserRole role;
 
+    @Column(name = "refresh_token")
     private String refreshToken;
 
     @Column(name = "providertype")
@@ -48,14 +49,15 @@ public class User {
     private ProviderType providerType;
 
     @Builder
-    public User(String pid, String name, String password, String phone, String email, String address, String role, String providerType) {
+    public User(String pid, String name, String password, String phone, String email, String address, UserRole role, ProviderType providerType, String refreshToken) {
         this.pid = pid;
         this.name = name;
         this.password = password;
         this.phone = phone;
         this.email = email;
         this.address = address;
-        this.role = UserRole.toEntity(role);
-        this.providerType = ProviderType.toEntity(providerType);
+        this.role = role;
+        this.providerType = providerType;
+        this.refreshToken = refreshToken;
     }
 }

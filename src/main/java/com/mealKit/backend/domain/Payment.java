@@ -30,7 +30,6 @@ public class Payment {
     @JoinColumn(name = "orderId")
     private Ordering ordering;
 
-
     @Builder
     public Payment(String method, Integer amount, LocalDateTime paymentDate, Ordering ordering) {
         this.method = method;

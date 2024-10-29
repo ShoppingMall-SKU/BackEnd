@@ -1,10 +1,12 @@
 package com.mealKit.backend.oauth2;
 
 import com.mealKit.backend.domain.User;
+import com.mealKit.backend.domain.enums.ProviderType;
 import com.mealKit.backend.domain.enums.UserRole;
 import com.mealKit.backend.dto.CustomOAuth2User;
 import com.mealKit.backend.exception.CommonException;
 import com.mealKit.backend.exception.ErrorCode;
+import com.mealKit.backend.jwt.JwtUtil;
 import com.mealKit.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -27,9 +30,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         final OAuth2Response oAuth2Response;
+        final ProviderType providerType;
 
         if (registrationId.equals("google")){
             oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
+            providerType = ProviderType.GOOGLE;
         }else {
             throw new CommonException(ErrorCode.AUTH_SERVER_USER_INFO_ERROR);
         }
@@ -43,7 +48,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                                     .pid(pid)
                                     .email(oAuth2Response.getEmail())
                                     .name(oAuth2Response.getName())
-                                    .role("ROLE_USER")
+                                    .role(UserRole.ROLE_USER)
+                                    .providerType(providerType)
+                                    .refreshToken(jwtUtil.createRefreshToken(pid))
                                     .build();
                             userRepository.save(user);
                             return user;

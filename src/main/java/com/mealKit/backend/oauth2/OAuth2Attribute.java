@@ -38,7 +38,7 @@ public class OAuth2Attribute {
                 .email(email)
                 .name(name)
                 .password("")
-                .role(UserRole.ROLE_USER.toString())
+                .role(UserRole.ROLE_USER)
                 .build();
     }
 }

@@ -12,7 +12,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "Order_Detail")
+@Table(name = "order_detail")
 @Getter
 @DynamicUpdate
 public class OrderDetail {

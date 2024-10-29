@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "Product")
+@Table(name = "product")
 @Getter
 @DynamicUpdate
 public class Product {

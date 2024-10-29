@@ -14,11 +14,12 @@ import java.util.Set;
 @Entity
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "Ordering")
+@Table(name = "ordering")
 @DynamicUpdate
 public class Ordering {
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
@@ -50,10 +51,6 @@ public class Ordering {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     private User user;
-
-    @OneToMany(mappedBy = "ordering")
-    private Set<OrderDetail> orderDetails = new LinkedHashSet<>();
-
 
     @Builder
     public Ordering(String receiverName,

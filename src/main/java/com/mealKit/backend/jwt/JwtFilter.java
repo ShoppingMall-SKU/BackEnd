@@ -2,6 +2,7 @@ package com.mealKit.backend.jwt;
 
 
 import com.mealKit.backend.domain.User;
+import com.mealKit.backend.domain.enums.ProviderType;
 import com.mealKit.backend.domain.enums.UserRole;
 import com.mealKit.backend.dto.CustomOAuth2User;
 import com.mealKit.backend.security.Constant;
@@ -81,10 +82,12 @@ public class JwtFilter extends OncePerRequestFilter {
         //토큰에서 pid, role 획득
         String pid = jwtUtil.getPid(token);
         String role = jwtUtil.getRole(token);
+        String providerType = jwtUtil.getProviderType(token);
 
         // user를 생성하여 값 set
         User user = User.builder()
                 .pid(pid)
+                .providerType(ProviderType.toEntity(providerType))
                 .role(UserRole.toEntity(role))
                 .build();
 

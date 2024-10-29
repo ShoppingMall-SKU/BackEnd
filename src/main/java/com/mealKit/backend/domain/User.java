@@ -20,23 +20,31 @@ public class User {
 
     private String pid;
 
-    @Setter
     @Column(name = "name")
     private String name;
 
+    @Setter
     @Column(name = "password")
     private String password; //비번
 
+    @Setter
     @Column(name = "phone")
     private String phone;
 
-    @Setter
     @Column(name = "email")
     private String email;
 
+    @Setter
     @Column(name = "address")
-    private String address;
+    private String address;         // 우편 번호 zipcode
 
+    @Setter
+    private String streetAddress;   // 지번 주소
+
+    @Setter
+    private String detailAddress;   // 상세 주소
+
+    @Setter
     @Column(name = "role")
     @Enumerated(value = EnumType.STRING)
     private UserRole role;
@@ -48,8 +56,12 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private ProviderType providerType;
 
-    @Builder
-    public User(String pid, String name, String password, String phone, String email, String address, UserRole role, ProviderType providerType, String refreshToken) {
+    @Setter
+    @Column(name = "use_yn")
+    private String useYN;
+
+    @Builder(toBuilder = true)
+    public User(String pid, String name, String password, String phone, String email, String address, UserRole role, ProviderType providerType, String refreshToken, String useYN) {
         this.pid = pid;
         this.name = name;
         this.password = password;
@@ -59,5 +71,6 @@ public class User {
         this.role = role;
         this.providerType = providerType;
         this.refreshToken = refreshToken;
+        this.useYN = useYN;
     }
 }

@@ -30,17 +30,24 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String pid = customUserDetails.getPid();
         String pt = customUserDetails.getProviderType();
-        System.out.println("pid" + pid);
-        System.out.println("pt" + pt);
+        System.out.println("pid : " + pid);
+        System.out.println("providerType : " + pt);
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(pid, role, 1000*60*3L);
+        System.out.println("role : " + role);
+
+        String token = jwtUtil.createJwt(pid, pt, role, 1000*60*3L);
         response.addCookie(createCookie("Authorization", token));
-        response.sendRedirect("http://localhost:3000/");
+
+        if (role.equals("ROLE_GUEST")){
+            response.sendRedirect("http://localhost:3000/register/"); // 회원가입 폼으로
+        }else{
+            response.sendRedirect("http://localhost:3000/");
+        }
     }
 
     private Cookie createCookie(String key, String value) {

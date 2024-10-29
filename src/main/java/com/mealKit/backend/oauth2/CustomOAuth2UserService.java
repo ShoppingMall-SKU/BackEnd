@@ -26,7 +26,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        System.out.println("oAuth2User" + oAuth2User);
+        System.out.println("oAuth2User : " + oAuth2User);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         final OAuth2Response oAuth2Response;
@@ -39,7 +39,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new CommonException(ErrorCode.AUTH_SERVER_USER_INFO_ERROR);
         }
 
-        String pid = oAuth2Response.getProvider()+" "+oAuth2Response.getProviderId();
+        String pid = oAuth2Response.getProviderId();
         return new CustomOAuth2User(
                 userRepository.findByPid(pid)
                 .orElseGet(
@@ -48,7 +48,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                                     .pid(pid)
                                     .email(oAuth2Response.getEmail())
                                     .name(oAuth2Response.getName())
-                                    .role(UserRole.ROLE_USER)
+                                    .role(UserRole.ROLE_GUEST)
                                     .providerType(providerType)
                                     .refreshToken(jwtUtil.createRefreshToken(pid))
                                     .build();

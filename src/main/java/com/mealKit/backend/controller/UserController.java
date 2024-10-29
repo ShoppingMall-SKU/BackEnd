@@ -25,7 +25,7 @@ public class UserController {
 
     @PostMapping("/signup")
     public void signUp(@RequestBody UserDTO userDTO) {
-        userService.signUp(userDTO.getName(), userDTO.getPassword(),userDTO.getPhone(),userDTO.getEmail(), userDTO.getAddress());
+        //userService.signUp(userDTO.getName(), userDTO.getPassword(),userDTO.getPhone(),userDTO.getEmail(), userDTO.getAddress());
     }
 
     @GetMapping("/check/email/{email}")
@@ -74,9 +74,9 @@ public class UserController {
 
      */
 
-    @DeleteMapping("/{name}")
-    public void deleteUser(@PathVariable String name) {
-        userService.delete(userService.readByName(name));
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Integer id) {
+        userService.delete(id);
     }
 
     @PatchMapping("/{name}")

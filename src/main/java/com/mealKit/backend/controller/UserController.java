@@ -21,10 +21,10 @@ public class UserController {
     private final UserService userService;
 
     // 소셜 로그인
-    @PatchMapping("/social/signup/{id}")
-    public ResponseDto<String> socialSignup(@PathVariable Integer id, @RequestBody @Valid UserSocialSignUpDTO socialDto) {
-        userService.socialSignUp(id,socialDto);
-        return ResponseDto.ok("userService.socialSignup : " + id);
+    @PatchMapping("/social/signup/{email}")
+    public ResponseDto<String> socialSignup(@PathVariable String email, @RequestBody @Valid UserSocialSignUpDTO socialDto) {
+        userService.socialSignUp(email, socialDto);
+        return ResponseDto.ok("userService.socialSignup : " + email);
     }
     // user delete
     @PatchMapping("/delete/{id}")

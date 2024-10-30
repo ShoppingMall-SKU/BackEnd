@@ -61,7 +61,7 @@ public class User {
     private String useYN;
 
     @Builder(toBuilder = true)
-    public User(String pid, String name, String password, String phone, String email, String address, UserRole role, ProviderType providerType, String refreshToken, String useYN) {
+    public User(String pid, String name, String password, String phone, String email, String address, UserRole role, ProviderType providerType, String refreshToken, String useYN, String streetAddress, String detailAddress) {
         this.pid = pid;
         this.name = name;
         this.password = password;

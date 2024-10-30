@@ -17,5 +17,7 @@ public class AppConfig extends WebMvcConfigurationSupport {
                 .addResourceLocations("/css/");
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("/images/");
+        registry.addResourceHandler("/swagger-ui/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/4.15.5/");
     }
 }

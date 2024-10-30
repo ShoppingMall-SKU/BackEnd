@@ -2,6 +2,7 @@ package com.mealKit.backend.oauth2;
 
 import com.mealKit.backend.dto.CustomOAuth2User;
 import com.mealKit.backend.jwt.JwtUtil;
+import com.mealKit.backend.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,7 +45,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.addCookie(createCookie("Authorization", token));
 
         if (role.equals("ROLE_GUEST")){
-            response.sendRedirect("http://localhost:3000/register/"); // 회원가입 폼으로
+            String email = customUserDetails.getEmail();
+            response.sendRedirect("http://localhost:3000/register?email="+ email); // 회원가입 폼으로
         }else{
             response.sendRedirect("http://localhost:3000/");
         }

@@ -1,37 +1,41 @@
 package com.mealKit.backend.dto;
-
-import com.mealKit.backend.domain.enums.ProviderType;
-import com.mealKit.backend.domain.enums.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 
-
-// 프로필 조회 목적
+// 폼 로그인 목적
 @Getter
-public class UserDetailDTO {
+public class UserSignUpDTO {
 
+    @NotBlank
     private String name;
 
+    @NotBlank
+    private String password;
+
+    @NotBlank
     private String phone;
 
+    @NotBlank
     private String email;
 
+    @NotBlank
     private String zipcode;
 
+    @NotBlank
     private String streetAdr;
 
+    @NotBlank
     private String detailAdr;
 
-    private ProviderType providerType;
     @Builder
-    public UserDetailDTO(String name, String phone, String email, String address, String streetAdr,String detailAdr, UserRole role, ProviderType pt) {
+    public UserSignUpDTO(String name, String password, String phone, String email, String zipcode, String streetAdr, String detailAdr) {
         this.name = name;
+        this.password = password;
         this.phone = phone;
         this.email = email;
-        this.zipcode = address;
+        this.zipcode = zipcode;
         this.streetAdr = streetAdr;
         this.detailAdr = detailAdr;
-        this.providerType = pt;
     }
 }

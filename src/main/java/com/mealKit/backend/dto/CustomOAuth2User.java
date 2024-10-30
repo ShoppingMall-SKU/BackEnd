@@ -1,7 +1,6 @@
 package com.mealKit.backend.dto;
 
 import com.mealKit.backend.domain.User;
-import com.mealKit.backend.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -49,4 +48,6 @@ public class CustomOAuth2User implements OAuth2User {
     }
 
     public String getProviderType() { return user.getProviderType().name();}
+
+    public String getEmail() {return user.getEmail();}
 }

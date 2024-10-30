@@ -22,6 +22,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -44,8 +45,9 @@ public class UserService {
 
     // 회원가입(남은 내용 수정 기능)
     @Transactional
-    public void socialSignUp(Integer userId, UserSocialSignUpDTO socialDto) {
-        Optional<User> user = userRepository.findById(userId);
+    public void socialSignUp(String email, UserSocialSignUpDTO socialDto) {
+
+        Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent()){
             user.get().setPhone(socialDto.getPhone());
             user.get().setAddress(socialDto.getZipcode());

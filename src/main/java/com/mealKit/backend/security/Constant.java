@@ -8,7 +8,13 @@ public class Constant {
             "/oauth2/**",
             "/auth/**",
             "/login/**",
-            "/auth/google"
+            "/auth/google",
+            "/api-ui.html",
+            "/swagger-ui/index.html",
+            "/api/**",
+            "/api-docs",
+            "/v3/api-docs/**",
+            "/api-docs/**"
     };
 
 }

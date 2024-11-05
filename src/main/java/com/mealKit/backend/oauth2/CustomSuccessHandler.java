@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +24,9 @@ import java.util.Iterator;
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
+
+    @Value("${react.client}")
+    private String client;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -47,9 +51,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         //log.info(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         if (role.equals("ROLE_GUEST")){
             String email = customUserDetails.getEmail();
-            response.sendRedirect("http://localhost:3000/register?email="+ email); // 회원가입 폼으로
+            response.sendRedirect(client + "/register?email="+ email); // 회원가입 폼으로
         }else{
-            response.sendRedirect("http://localhost:3000/");
+            response.sendRedirect(client + "/");
         }
     }
 

@@ -11,8 +11,10 @@ import com.mealKit.backend.jwt.JwtToken;
 import com.mealKit.backend.jwt.JwtUtil;
 import com.mealKit.backend.redis.RedisConfig;
 import com.mealKit.backend.domain.User;
+import com.mealKit.backend.redis.RedisService;
 import com.mealKit.backend.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -22,6 +24,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,11 +44,16 @@ public class UserService {
     private final JwtUtil jwtUtil;
 
     private final BCryptPasswordEncoder encoder;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final RedisConfig redisConfig;
+    private final RedisService redisService;
+
+
     //private final RedisConfig redisConfig;
 
     // 회원가입(남은 내용 수정 기능)
     @Transactional
-    public void socialSignUp(String email, UserSocialSignUpDTO socialDto) {
+    public Boolean socialSignUp(String email, UserSocialSignUpDTO socialDto) {
 
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent()){
@@ -54,6 +62,8 @@ public class UserService {
             user.get().setStreetAddress(socialDto.getStreetAdr());
             user.get().setDetailAddress(socialDto.getDetailAdr());
             user.get().setRole(UserRole.ROLE_USER);
+
+            return Boolean.TRUE;
         }else{
             throw new CommonException(ErrorCode.NOT_FOUND_USER);
         }
@@ -137,8 +147,8 @@ public class UserService {
     }
 
     // User 프로필 조회 목적
-    public UserDetailDTO getUserInfo(Integer userId) {
-        Optional<User> user = userRepository.findById(userId);
+    public UserDetailDTO getUserInfo(String pid) {
+        Optional<User> user = userRepository.findByPid(pid);
 
         return user.map(this::toUserDetailDTO)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
@@ -169,26 +179,37 @@ public class UserService {
                 .build());
     }
 
-//    public String login(UserLoginDTO userLoginDTO) {
-//        String email = userLoginDTO.getEmail();
-//        String pw = userLoginDTO.getPassword();
-//        log.info("로그인 시도 : {}",email);
-//        User user = userRepository.findByEmail(email).orElseThrow(()-> new CommonException(ErrorCode.NOT_FOUND_USER));
-//
-//        List<SimpleGrantedAuthority> authorityList = List.of(new SimpleGrantedAuthority(user.getRole().name()));
-//
-//        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, pw, authorityList);
-//        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-//        JwtToken token = jwtUtil.generateToken(user.getRole());
-//
-//        Long now = new Date().getTime();
-//        Long expiration = jwtUtil.getExpirationFromToken(token.getRefreshToken()).getTime();
-//        redisConfig.redisTemplate().opsForValue().set(user.getEmail(), token.getRefreshToken(), expiration - now, TimeUnit.MILLISECONDS);
-//        updateRefreshToken(user, token.getRefreshToken()); // 이게 굳이 필요가 있나 어차피 redis 쓰는데
-//
-//        return token.getAccessToken();
-//
-//    }
+    public String login(UserLoginDTO userLoginDTO) {
+        String email = userLoginDTO.getEmail();
+        String pw = userLoginDTO.getPassword();
+        log.info("로그인 시도 : {}",email);
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new CommonException(ErrorCode.NOT_FOUND_USER));
+
+        List<SimpleGrantedAuthority> authorityList = List.of(new SimpleGrantedAuthority(user.getRole().name()));
+        log.info(authorityList.toString());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, pw, authorityList);
+
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        //log.info(SecurityContextHolder.getContext().getAuthentication().getName());
+        String token = jwtUtil.createJwt(user.getPid(),"",authentication.getAuthorities().toString().substring(1,10), 1000 * 60 * 60L);
+        //log.info(token);
+
+        String refreshToken = jwtUtil.createRefreshToken();
+        user.setRefreshToken(refreshToken);
+        redisService.save(user.getPid(), refreshToken);
+
+        return token;
+    }
+
+    public Boolean logout(String pid) {
+        try {
+            redisConfig.redisTemplate().delete(pid);
+            return Boolean.TRUE;
+        } catch (Exception e) {
+            return Boolean.FALSE;
+        }
+    }
 
     public void updateRefreshToken(User user, String refreshToken) {
 //        user.setRefreshToken(refreshToken);

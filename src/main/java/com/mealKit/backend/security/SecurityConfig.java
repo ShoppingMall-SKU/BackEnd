@@ -4,10 +4,12 @@ import com.mealKit.backend.jwt.JwtFilter;
 import com.mealKit.backend.jwt.JwtUtil;
 import com.mealKit.backend.oauth2.CustomOAuth2UserService;
 import com.mealKit.backend.oauth2.CustomSuccessHandler;
+import com.mealKit.backend.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,6 +32,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
     private final JwtUtil jwtUtil;
+    private final LoginService loginService;
 
 
     private String swagger = "http://localhost:8080";
@@ -40,11 +43,16 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 // CSRF 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
-
+                .userDetailsService(loginService)
                 // 폼 로그인과 HTTP Basic 인증 비활성화
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -55,7 +63,7 @@ public class SecurityConfig {
                 // OAuth2 로그인 설정
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(customSuccessHandler)
-                        .authorizationEndpoint(auth -> auth.baseUri("/auth/google"))
+                        //.authorizationEndpoint(auth -> auth.baseUri("/auth/google"))
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                 )
 
@@ -78,7 +86,8 @@ public class SecurityConfig {
                 }))
 
                 // JWT 필터 추가
-                .addFilterAfter(new JwtFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class);
+                .addFilterAfter(new JwtFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

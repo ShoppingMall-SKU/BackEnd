@@ -21,8 +21,9 @@ public class LoginService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 회원입니다."));
 
         return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())
+                .username(user.getPid())
                 .password(user.getPassword())
+                .roles(user.getRole().name().substring(5))
                 .build();
     }
 

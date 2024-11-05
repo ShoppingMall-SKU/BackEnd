@@ -1,15 +1,15 @@
 package com.mealKit.backend.oauth2;
 
-import com.mealKit.backend.dto.CustomOAuth2User;
 import com.mealKit.backend.jwt.JwtUtil;
-import com.mealKit.backend.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
@@ -39,11 +40,11 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        System.out.println("role : " + role);
+//        System.out.println("role : " + role);
 
         String token = jwtUtil.createJwt(pid, pt, role, 1000*60*3L);
         response.addCookie(createCookie("Authorization", token));
-
+        //log.info(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         if (role.equals("ROLE_GUEST")){
             String email = customUserDetails.getEmail();
             response.sendRedirect("http://localhost:3000/register?email="+ email); // 회원가입 폼으로

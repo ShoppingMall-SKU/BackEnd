@@ -17,6 +17,8 @@ public class Constant {
             "/api-docs/**",
             "/api/user/login/**",
             "/api/user/signup/**",
+            "/api/product/list",
+            "/api/product/detail/**",
     };
 
 }

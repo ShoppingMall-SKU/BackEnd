@@ -1,7 +1,8 @@
 package com.mealKit.backend.controller;
 
-import com.mealKit.backend.dto.ProductPathDto;
+import com.mealKit.backend.dto.ProductResponseDto;
 import com.mealKit.backend.dto.ProductPostDto;
+import com.mealKit.backend.exception.ResponseDto;
 import com.mealKit.backend.service.ProductService;
 import com.mealKit.backend.domain.Product;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +20,8 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("/list") // 전체 조회 test완
-    public ResponseEntity<List<Product>> getProductList(){
-        List<Product> productList = this.productService.getAll();
-        return ResponseEntity.ok(productList);
+    public ResponseDto<List<ProductResponseDto>> getProductList(){
+        return ResponseDto.ok(this.productService.getAll());
     }
     @GetMapping("/list/{name}") // 검색기능 test완
     public ResponseEntity<List<Product>> getProductByName(@PathVariable String name) {
@@ -40,41 +40,40 @@ public class ProductController {
     }
 
     @GetMapping("/detail/{id}") // 상품 상세 조회 test완
-    public ResponseEntity<Product> getProductDetail(@PathVariable int id){
-        Product product = this.productService.getProductById(id);
-        return ResponseEntity.ok(product);
+    public ResponseDto<ProductResponseDto> getProductDetail(@PathVariable Integer id){
+        return ResponseDto.ok(ProductResponseDto.toEntity(this.productService.getProductById(id)));
     }
 
-    @PostMapping("/create-product") // test완
-    public ResponseEntity<List<Product>> postProduct(@RequestBody ProductPostDto productPostDto){
-        productService.createProduct(productPostDto.getName(), productPostDto.getDetail(),productPostDto.getPrice(),
-                productPostDto.getImg(),productPostDto.getSale(),productPostDto.getStock(),
-                productPostDto.getBrand(),productPostDto.getStatus());
-        return ResponseEntity.ok(productService.getAll());
-    }
-
-    @PatchMapping("/detail/{id}")
-    public ResponseEntity<List<Product>> pathProduct(@PathVariable int id, @RequestBody ProductPathDto productPathDto){
-        Product product = productService.getProductById(id);
-        productService.modifiedProduct(product, productPathDto.getName(),productPathDto.getImg(),
-                productPathDto.getPrice(), productPathDto.getStock());
-
-        return ResponseEntity.ok((productService.getAll()));
-    }
-
-    @PatchMapping("/detail/sale/{id}")
-    public ResponseEntity<List<Product>> pathProductSale(@PathVariable int id, @RequestBody ProductPathDto productPathDto){
-        Product product = productService.getProductById(id);
-        productService.modifiedSale(product, productPathDto.getSale());
-
-        return ResponseEntity.ok((productService.getAll()));
-    }
-
-    @DeleteMapping("/detail/{id}")
-    public ResponseEntity<List<Product>> deleteProduct(@PathVariable int id){
-        Product product = productService.getProductById(id);
-        productService.deleteProduct(product);
-
-        return ResponseEntity.ok(productService.getAll());
-    }
+//    @PostMapping("/create-product") // test완
+//    public ResponseEntity<List<Product>> postProduct(@RequestBody ProductPostDto productPostDto){
+//        productService.createProduct(productPostDto.getName(), productPostDto.getDetail(),productPostDto.getPrice(),
+//                productPostDto.getImg(),productPostDto.getSale(),productPostDto.getStock(),
+//                productPostDto.getBrand(),productPostDto.getStatus());
+//        return ResponseEntity.ok(productService.getAll());
+//    }
+//
+//    @PatchMapping("/detail/{id}")
+//    public ResponseEntity<List<Product>> pathProduct(@PathVariable int id, @RequestBody ProductResponseDto productResponseDto){
+//        Product product = productService.getProductById(id);
+//        productService.modifiedProduct(product, productResponseDto.getName(), productResponseDto.getImg(),
+//                productResponseDto.getPrice(), productResponseDto.getStock());
+//
+//        return ResponseEntity.ok((productService.getAll()));
+//    }
+//
+//    @PatchMapping("/detail/sale/{id}")
+//    public ResponseEntity<List<Product>> pathProductSale(@PathVariable int id, @RequestBody ProductResponseDto productResponseDto){
+//        Product product = productService.getProductById(id);
+//        productService.modifiedSale(product, productResponseDto.getSale());
+//
+//        return ResponseEntity.ok((productService.getAll()));
+//    }
+//
+//    @DeleteMapping("/detail/{id}")
+//    public ResponseEntity<List<Product>> deleteProduct(@PathVariable int id){
+//        Product product = productService.getProductById(id);
+//        productService.deleteProduct(product);
+//
+//        return ResponseEntity.ok(productService.getAll());
+//    }
 }

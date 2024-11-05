@@ -1,6 +1,7 @@
 package com.mealKit.backend.domain;
 
 
+import com.mealKit.backend.domain.enums.ProductStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
@@ -45,7 +46,8 @@ public class Product {
     private String brand;
 
     @Column(name = "status")
-    private status status;
+    @Enumerated(EnumType.STRING)
+    private ProductStatus status;
 
     @OneToMany(mappedBy = "product")
     private Set<Cart> carts = new LinkedHashSet<>();
@@ -56,23 +58,6 @@ public class Product {
     @PreUpdate
     public void preUpdate() {this.create_date = LocalDateTime.now();}
 
-    public enum status {
-        STATUS_COLD("냉장"),
-        STATUS_FROZEN("냉동"),
-        STATUS_ROOM_TEMP("실온");
-
-        private String status;
-
-        status(String status) {
-            this.status = status;
-        }
-
-        public String getStatus() {
-            return status;
-        }
-
-    }
-
     @Builder
     public Product(String name,
                    String detail,
@@ -82,7 +67,7 @@ public class Product {
                    Integer stock,
                    LocalDateTime create_date,
                    String brand,
-                   Product.status status) {
+                   ProductStatus status) {
 
         this.name = name;
         this.detail = detail;

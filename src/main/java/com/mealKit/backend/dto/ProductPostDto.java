@@ -1,6 +1,7 @@
 package com.mealKit.backend.dto;
 
 import com.mealKit.backend.domain.Product;
+import com.mealKit.backend.domain.enums.ProductStatus;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,7 @@ public class ProductPostDto {
 
     private String brand;
 
-    private Product.status status;
+    private ProductStatus status;
 
 
 }

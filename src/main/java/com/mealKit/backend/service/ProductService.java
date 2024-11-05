@@ -1,6 +1,10 @@
 package com.mealKit.backend.service;
 
 import com.mealKit.backend.domain.Product;
+import com.mealKit.backend.domain.enums.ProductStatus;
+import com.mealKit.backend.dto.ProductResponseDto;
+import com.mealKit.backend.exception.CommonException;
+import com.mealKit.backend.exception.ErrorCode;
 import com.mealKit.backend.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +22,7 @@ public class ProductService {
     //CRUD
     // Create Product
     public void createProduct(String name, String detail, Integer price, String img, Integer sale, Integer stock,
-                              String brand, Product.status staus){
+                              String brand, ProductStatus staus){
 
 
         this.productRepository.save(Product
@@ -36,14 +40,12 @@ public class ProductService {
     }
 
     // Read Product
-    public Product getProductById(int id){
-        Optional<Product> product = this.productRepository.findById(id);
-        if(product.isPresent()){
-            return product.get();
-        }else{
-            throw new RuntimeException("Data Not Found");
-        }
+    public Product getProductById(Integer id){
+        return this.productRepository.findById(id).orElseThrow((() -> new CommonException(ErrorCode.NOT_FOUND_RESOURCE)));
     }
+
+
+
     public Product getProductByName(String name){
         Optional<Product> product = this.productRepository.findByName(name);
         if(product.isPresent()){
@@ -52,8 +54,8 @@ public class ProductService {
             throw new RuntimeException("Data Not Found");
         }
     }
-    public List<Product> getAll(){ // 전체 조회
-        return productRepository.findAll();
+    public List<ProductResponseDto> getAll(){ // 전체 조회
+        return productRepository.findAll().stream().map(ProductResponseDto::toEntity).toList();
     }
 
     public List<Product> searchByName(String name){ // 검색기능

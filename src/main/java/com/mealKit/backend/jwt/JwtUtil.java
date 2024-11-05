@@ -58,13 +58,8 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String createRefreshToken(String pid) {
-        Claims claims = Jwts.claims();
-
-        claims.put("pid", pid);
-
+    public String createRefreshToken() {
         return Jwts.builder()
-                .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000*60*60*24*30L))
                 .signWith(key, SignatureAlgorithm.HS256)

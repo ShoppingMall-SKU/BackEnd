@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.UUID;
+
 @Entity
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user")
@@ -50,6 +52,7 @@ public class User {
     private UserRole role;
 
     @Column(name = "refresh_token")
+    @Setter
     private String refreshToken;
 
     @Column(name = "providertype")
@@ -72,5 +75,24 @@ public class User {
         this.providerType = providerType;
         this.refreshToken = refreshToken;
         this.useYN = useYN;
+    }
+
+    @Builder
+    public User(String name, String password, String phone, String email, String address, UserRole role, String refreshToken) {
+        this.name = name;
+        this.password = password;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.role = role;
+        this.refreshToken = refreshToken;
+        this.useYN = "Y";
+        generatePID();
+    }
+
+    @PrePersist
+    private void generatePID() {
+        UUID uuid = UUID.randomUUID();
+        this.pid = String.valueOf(Math.abs(uuid.getMostSignificantBits()));
     }
 }

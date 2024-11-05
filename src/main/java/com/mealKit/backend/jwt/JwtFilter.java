@@ -4,7 +4,7 @@ package com.mealKit.backend.jwt;
 import com.mealKit.backend.domain.User;
 import com.mealKit.backend.domain.enums.ProviderType;
 import com.mealKit.backend.domain.enums.UserRole;
-import com.mealKit.backend.dto.CustomOAuth2User;
+import com.mealKit.backend.oauth2.CustomOAuth2User;
 import com.mealKit.backend.security.Constant;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,17 +12,17 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.Filter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -66,7 +66,6 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        System.out.println("end?");
         // 토큰
         String token = authorization;
 
@@ -84,21 +83,36 @@ public class JwtFilter extends OncePerRequestFilter {
         String role = jwtUtil.getRole(token);
         String providerType = jwtUtil.getProviderType(token);
 
-        // user를 생성하여 값 set
-        User user = User.builder()
-                .pid(pid)
-                .providerType(ProviderType.toEntity(providerType))
-                .role(UserRole.toEntity(role))
-                .build();
 
-        // UserDetails에 회원 정보 객체 담기
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User(user);
+        // id, pw 로그인 회원
+        if(providerType.isEmpty()) {
+//            log.info("provider type is empty");
+            Authentication authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            pid,
+                            null,
+                            Collections.singletonList(new SimpleGrantedAuthority(role)));
 
-        // 스프링 시큐리티 인증 토큰 생성
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, "", customOAuth2User.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+        // 소셜 로그인 회원
+        else {
+            // user를 생성하여 값 set
+            User user = User.builder()
+                    .pid(pid)
+                    .providerType(ProviderType.toEntity(providerType))
+                    .role(UserRole.toEntity(role))
+                    .build();
 
-        // 세션에 사용자 등록
-        SecurityContextHolder.getContext().setAuthentication(authToken);
+            // UserDetails에 회원 정보 객체 담기
+            CustomOAuth2User customOAuth2User = new CustomOAuth2User(user);
+
+            // 스프링 시큐리티 인증 토큰 생성
+            Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, "", customOAuth2User.getAuthorities());
+
+            // 세션에 사용자 등록
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+        }
 
         filterChain.doFilter(request,response);
 

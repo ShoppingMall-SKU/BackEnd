@@ -1,7 +1,6 @@
-package com.mealKit.backend.dto;
+package com.mealKit.backend.oauth2;
 
 import com.mealKit.backend.domain.User;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -21,9 +20,8 @@ public class CustomOAuth2User implements OAuth2User {
     // 구글, 네이버 형식이 달라 사용하기 힘들어 직접 구현
     @Override
     public Map<String, Object> getAttributes() {
-        return null;
+        return Map.of("pid", user.getPid(), "name", user.getName(), "email", user.getEmail());
     }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collection = new ArrayList<>();

@@ -17,7 +17,7 @@ public class ProductService {
 
     //CRUD
     // Create Product
-    public void createProduct(String name, String detail, int price, String img, int sale, int stock,
+    public void createProduct(String name, String detail, Integer price, String img, Integer sale, Integer stock,
                               String brand, Product.status staus){
 
 

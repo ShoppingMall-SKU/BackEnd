@@ -18,6 +18,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry corsRegistry) {
         corsRegistry.addMapping("/**")
                 .exposedHeaders("Set-Cookie")
-                .allowedOrigins("http://localhost:3000", "https://www.mealshop.shop/");
+                .allowedOrigins("http://localhost:3000", "https://www.mealshop.shop");
     }
 }

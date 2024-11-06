@@ -76,7 +76,7 @@ public class SecurityConfig {
                 // CORS 설정
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.setAllowedOrigins(List.of("http://localhost:3000", swagger, "https://mealkit-lake.vercel.app/"));
+                    configuration.setAllowedOrigins(List.of("http://localhost:3000", swagger, "https://www.mealshop.shop/"));
                     configuration.setAllowedMethods(Collections.singletonList("*"));
                     configuration.setAllowCredentials(true);
                     configuration.setAllowedHeaders(Collections.singletonList("*"));

@@ -14,7 +14,7 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("^https?:\\/\\/api.mealshop.shop$"); // e.g. /**, http://domain1.com
+        config.addAllowedOrigin("https://api.mealshop.shop"); // e.g. /**, http://domain1.com
         config.addAllowedHeader(CorsConfiguration.ALL);
         config.addAllowedMethod(HttpMethod.GET);
         config.addAllowedMethod(HttpMethod.POST);
@@ -26,7 +26,7 @@ public class CorsConfig {
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 
-        source.registerCorsConfiguration("^https?:\\/\\/api.mealshop.shop$", config); // "/**"
+        source.registerCorsConfiguration("/**", config); // "/**"
         return new CorsFilter(source);
     }
 

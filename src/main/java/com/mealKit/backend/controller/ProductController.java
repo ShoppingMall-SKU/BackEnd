@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/product")
+@CrossOrigin("https://www.mealshop.shop")
 public class ProductController {
 
     private final ProductService productService;

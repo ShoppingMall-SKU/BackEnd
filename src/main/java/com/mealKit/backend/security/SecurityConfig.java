@@ -49,20 +49,20 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", swagger, "https://www.mealshop.shop"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(Collections.singletonList("*"));
-        configuration.setMaxAge(3600L);
-        //configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(List.of("http://localhost:3000", swagger, "https://www.mealshop.shop"));
+//        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//        configuration.setAllowCredentials(true);
+//        configuration.setAllowedHeaders(Collections.singletonList("*"));
+//        configuration.setMaxAge(3600L);
+//        //configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -90,8 +90,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-                // CORS 설정
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+//                // CORS 설정
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 // JWT 필터 추가
                 .addFilterAfter(new JwtFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class)

@@ -43,4 +43,12 @@ public class AppConfig extends WebMvcConfigurationSupport {
         argumentResolvers.add(userPidResolver);
     }
 
+    @Override
+    public void addCorsMappings(CorsRegistry corsRegistry) {
+        corsRegistry.addMapping("/**")
+                .allowedOrigins("http://localhost:3000","https://www.mealshop.shop")
+                .exposedHeaders("*")
+                .allowCredentials(true)
+                .allowedHeaders("*");
+    }
 }

@@ -46,7 +46,7 @@ public class AppConfig extends WebMvcConfigurationSupport {
     @Override
     public void addCorsMappings(CorsRegistry corsRegistry) {
         corsRegistry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000","https://www.mealshop.shop")
+                .allowedOrigins("https://www.mealshop.shop")
                 .exposedHeaders("*")
                 .allowCredentials(true)
                 .allowedHeaders("*");

@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,9 +35,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Service
-@Transactional
 @Slf4j
 public class UserService {
 
@@ -50,6 +50,12 @@ public class UserService {
 
 
     //private final RedisConfig redisConfig;
+
+    public UserDetailDTO getUserByPid(String pid) {
+        User user = userRepository.findByPid(pid).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+        return UserDetailDTO.toEntity(user);
+    }
+
 
     // 회원가입(남은 내용 수정 기능)
     @Transactional
@@ -146,24 +152,7 @@ public class UserService {
         }
     }
 
-    // User 프로필 조회 목적
-    public UserDetailDTO getUserInfo(String pid) {
-        Optional<User> user = userRepository.findByPid(pid);
 
-        return user.map(this::toUserDetailDTO)
-                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
-    }
-    private UserDetailDTO toUserDetailDTO(User user) {
-        return UserDetailDTO.builder()
-                .name(user.getName())
-                .phone(user.getPhone())
-                .email(user.getEmail())
-                .address(user.getAddress())
-                .streetAdr(user.getStreetAddress())
-                .detailAdr(user.getDetailAddress())
-                .pt(user.getProviderType())
-                .build();
-    }
     // 폼 회원가입
     public void signUp (UserSignUpDTO userSignUpDTO) {
 

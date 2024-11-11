@@ -1,9 +1,12 @@
 package com.mealKit.backend.exception;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Nullable;
 import org.springframework.http.HttpStatus;
+
 
 public record ResponseDto<T>(@JsonIgnore HttpStatus httpStatus,
                              @Nullable T data,

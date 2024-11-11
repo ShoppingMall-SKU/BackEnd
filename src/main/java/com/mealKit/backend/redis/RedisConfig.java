@@ -1,5 +1,6 @@
 package com.mealKit.backend.redis;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +16,7 @@ public class RedisConfig {
     private String redisHost;
 
     @Value("${spring.data.redis.port}")
-    private int redisPort;
+    private Integer redisPort;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {

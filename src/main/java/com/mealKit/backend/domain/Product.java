@@ -40,7 +40,7 @@ public class Product {
     private Integer stock;
 
     @Column(name = "create_date")
-    private LocalDateTime create_date;
+    private LocalDateTime createDate;
 
     @Column(name = "brand")
     private String brand;
@@ -56,7 +56,7 @@ public class Product {
     private Set<OrderDetail> orderDetails = new LinkedHashSet<>();
 
     @PreUpdate
-    public void preUpdate() {this.create_date = LocalDateTime.now();}
+    public void preUpdate() {this.createDate = LocalDateTime.now();}
 
     @Builder
     public Product(String name,
@@ -75,7 +75,7 @@ public class Product {
         this.img = img;
         this.sale = sale;
         this.stock = stock;
-        this.create_date = create_date;
+        this.createDate = create_date;
         this.brand = brand;
         this.status = status;
     }

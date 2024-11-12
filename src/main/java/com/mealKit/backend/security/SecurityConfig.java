@@ -4,13 +4,14 @@ import com.mealKit.backend.jwt.JwtFilter;
 import com.mealKit.backend.jwt.JwtUtil;
 import com.mealKit.backend.oauth2.CustomOAuth2UserService;
 import com.mealKit.backend.oauth2.CustomSuccessHandler;
+import com.mealKit.backend.redis.RedisService;
+import com.mealKit.backend.repository.UserRepository;
 import com.mealKit.backend.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,11 +35,12 @@ import java.util.List;
 public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
+    private final RedisService redisService;
     private final JwtUtil jwtUtil;
     private final LoginService loginService;
 
 
-    private String swagger = "http://localhost:8080";
+    private final String swagger = "http://localhost:8080";
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -50,24 +52,25 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(List.of("http://localhost:3000", swagger, "https://www.mealshop.shop"));
-//        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//        configuration.setAllowCredentials(true);
-//        configuration.setAllowedHeaders(Collections.singletonList("*"));
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", swagger, "https://www.mealshop.shop"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedHeaders(Collections.singletonList("*"));
 
-//        configuration.setMaxAge(3600L);
-//        //configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
+        configuration.setMaxAge(3600L);
+        configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, UserRepository userRepository) throws Exception {
         http
                 .cors(AbstractHttpConfigurer::disable)
                 // CSRF 비활성화
@@ -95,11 +98,11 @@ public class SecurityConfig {
                 )
 
                 // CORS 설정
-//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 // JWT 필터 추가
-                .addFilterAfter(new JwtFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class)
-                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAfter(new JwtFilter(redisService, userRepository, jwtUtil), OAuth2LoginAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(redisService, userRepository ,jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

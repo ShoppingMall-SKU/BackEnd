@@ -1,5 +1,7 @@
 package com.mealKit.backend.redis;
 
+import com.mealKit.backend.exception.CommonException;
+import com.mealKit.backend.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,7 +20,12 @@ public class RedisService {
 
     // 데이터 조회
     public Object findByKey(String key) {
-        return redisTemplate.redisTemplate().opsForValue().get(key);
+        String val = redisTemplate.redisTemplate().opsForValue().get(key);
+        if(val != null) {
+            return val;
+        } else {
+            throw new CommonException(ErrorCode.ACCESS_DENIED_ERROR);
+        }
     }
 
     // 데이터 삭제

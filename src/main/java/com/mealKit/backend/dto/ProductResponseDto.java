@@ -6,8 +6,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 
-@Getter
-@Setter
 @Data
 @NoArgsConstructor
 public class ProductResponseDto {
@@ -56,7 +54,7 @@ public class ProductResponseDto {
                 .img(product.getImg())
                 .sale(product.getSale())
                 .stock(product.getStock())
-                .create_date(product.getCreate_date())
+                .create_date(product.getCreateDate())
                 .brand(product.getBrand())
                 .status(product.getStatus().getStatus())
                 .build();

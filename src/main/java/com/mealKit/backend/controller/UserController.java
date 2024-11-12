@@ -74,8 +74,11 @@ public class UserController {
 
     // 프로필 조회 목적
     @GetMapping("/info")
-    public ResponseDto<UserDetailDTO> getUserDetail(@Pid String pid) {
-        return ResponseDto.ok(userService.getUserInfo(pid));
+    public ResponseDto<UserDetailDTO> getUserDetail(@Pid String pid, HttpServletResponse response) {
+        log.info(pid);
+//        response.setHeader("content-type", "application/json");
+        return ResponseDto.ok(userService.getUserByPid(
+                pid));
     }
 
     // 회원가입: 이메일 확인 -> 이미 존재하는 이메일이면 거부

@@ -1,16 +1,17 @@
 package com.mealKit.backend.dto;
 
+import com.mealKit.backend.domain.User;
 import com.mealKit.backend.domain.enums.ProviderType;
 import com.mealKit.backend.domain.enums.UserRole;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 // 프로필 조회 목적
-@Getter
+@Data
+@NoArgsConstructor
 public class UserDetailDTO {
-
     private String name;
 
     private String phone;
@@ -24,6 +25,7 @@ public class UserDetailDTO {
     private String detailAdr;
 
     private ProviderType providerType;
+
     @Builder
     public UserDetailDTO(String name, String phone, String email, String address, String streetAdr,String detailAdr, UserRole role, ProviderType pt) {
         this.name = name;
@@ -33,5 +35,18 @@ public class UserDetailDTO {
         this.streetAdr = streetAdr;
         this.detailAdr = detailAdr;
         this.providerType = pt;
+    }
+
+    public static UserDetailDTO toEntity(User user) {
+        return UserDetailDTO
+                .builder()
+                .name(user.getName())
+                .phone(user.getPhone())
+                .email(user.getEmail())
+                .address(user.getAddress())
+                .streetAdr(user.getStreetAddress())
+                .detailAdr(user.getDetailAddress())
+                .pt(user.getProviderType())
+                .build();
     }
 }

@@ -1,11 +1,10 @@
 package com.mealKit.backend.jwt;
 
 import com.mealKit.backend.domain.enums.UserRole;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
+@Slf4j
 @Component
 public class JwtUtil {
 
@@ -27,16 +27,49 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(byteSecretKey);
     }
 
+//    public String getPid(String token) {
+//        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("pid", String.class);
+//    }
+//
+//    public String getProviderType(String token) {
+//        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("ProviderType", String.class);
+//    }
+//
+//    public String getRole(String token) {
+//        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("role", String.class);
+//    }
+
+    // 만료된 JWT 토큰에서 서명 검증 없이 Claims를 추출하는 방법
+    public Claims parseClaimsWithoutSignatureValidation(String token) {
+        try {
+            // 서명 검증 없이 새로운 JwtParser를 생성하여 Claims 파싱
+            JwtParser jwtParser = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build();
+            return jwtParser.parseClaimsJws(token).getBody();
+        } catch (ExpiredJwtException e) {
+            // 만료된 토큰에서 Claims 추출
+            return e.getClaims();  // 만료된 토큰의 경우에도 Claims 반환
+        } catch (JwtException e) {
+            // JWT 파싱 오류 처리
+            throw new IllegalArgumentException("Invalid token", e);
+        }
+    }
+
+    // pid, ProviderType, role 등의 정보 추출
     public String getPid(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("pid", String.class);
+        Claims claims = parseClaimsWithoutSignatureValidation(token);
+        return claims.get("pid", String.class);
     }
 
     public String getProviderType(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("ProviderType", String.class);
+        Claims claims = parseClaimsWithoutSignatureValidation(token);
+        return claims.get("ProviderType", String.class);
     }
 
     public String getRole(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("role", String.class);
+        Claims claims = parseClaimsWithoutSignatureValidation(token);
+        return claims.get("role", String.class);
     }
 
     public Boolean isExpired(String token) {

@@ -24,15 +24,15 @@ public class Ordering {
     private Integer id;
 
 
-    @Column(name = "receiverName")
+    @Column(name = "receiver_name")
     private String receiverName;
 
 
-    @Column(name = "receiverPhone")
+    @Column(name = "receiver_phone")
     private String receiverPhone;
 
 
-    @Column(name = "receiverAddress")
+    @Column(name = "receiver_address")
     private String receiverAddress;
 
     @Setter
@@ -49,7 +49,7 @@ public class Ordering {
     private Integer totalPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Builder

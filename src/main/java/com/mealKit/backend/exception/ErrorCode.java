@@ -32,7 +32,7 @@ public enum ErrorCode {
     TOKEN_UNKNOWN_ERROR(40108, HttpStatus.UNAUTHORIZED, "알 수 없는 토큰입니다."),
 
     FILE_UPLOAD_ERROR(42201, HttpStatus.UNPROCESSABLE_ENTITY, "파일 업로드에 실패하였습니다."),
-
+    REDIS_NOT_FOUND(42202, HttpStatus.NOT_FOUND, "Redis에서 키를 찾을 수 없습니다."),
     ACCESS_DENIED_ERROR(40300, HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
 
 

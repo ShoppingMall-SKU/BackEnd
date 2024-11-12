@@ -44,6 +44,7 @@ public class UserDetailDTO {
                 .phone(user.getPhone())
                 .email(user.getEmail())
                 .address(user.getAddress())
+                .streetAdr(user.getStreetAddress())
                 .detailAdr(user.getDetailAddress())
                 .pt(user.getProviderType())
                 .build();

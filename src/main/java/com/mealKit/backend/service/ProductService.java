@@ -7,17 +7,23 @@ import com.mealKit.backend.exception.CommonException;
 import com.mealKit.backend.exception.ErrorCode;
 import com.mealKit.backend.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    final Integer countsPerPage = 6;
 
     //CRUD
     // Create Product
@@ -54,8 +60,22 @@ public class ProductService {
             throw new RuntimeException("Data Not Found");
         }
     }
-    public List<ProductResponseDto> getAll(){ // 전체 조회
-        return productRepository.findAll().stream().map(ProductResponseDto::toEntity).toList();
+    public Map<String, Object> getAll(Integer page){ // 전체 조회
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(new Sort.Order(Sort.Direction.DESC, "createDate"));
+        Pageable pageable = PageRequest.of(page, countsPerPage, Sort.by(orders));
+
+        log.info(productRepository.findAll(pageable).get().toString());
+        List<ProductResponseDto> ProductResponse =
+                productRepository
+                        .findAll(pageable).get()
+                        .map(ProductResponseDto::toEntity).toList();
+
+        Map<String, Object> ProductPageResponse = new HashMap<>();
+
+        ProductPageResponse.put("page", page);
+        ProductPageResponse.put("list", ProductResponse);
+        return ProductPageResponse;
     }
 
     public List<Product> searchByName(String name){ // 검색기능

@@ -15,17 +15,16 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/product")
-@CrossOrigin("https://www.mealshop.shop")
 public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping("/list") // 전체 조회 test완
-    public ResponseDto<List<ProductResponseDto>> getProductList(){
-        return ResponseDto.ok(this.productService.getAll());
+    @GetMapping("/list/{page}") // 전체 조회 test완
+    public ResponseDto<?> getProductList(@PathVariable("page") Integer page){
+        return ResponseDto.ok(this.productService.getAll(page));
     }
-    @GetMapping("/list/{name}") // 검색기능 test완
-    public ResponseEntity<List<Product>> getProductByName(@PathVariable String name) {
+    @GetMapping("/list") // 검색기능 test완
+    public ResponseEntity<List<Product>> getProductByName(@RequestParam("query") String name) {
         List<Product> product = productService.searchByName(name);
         // 데이터가 없는 경우 빈 리스트 반환
         if (product.isEmpty()) {

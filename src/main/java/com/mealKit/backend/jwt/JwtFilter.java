@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.bcel.Const;
 import org.hibernate.annotations.Filter;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,7 +50,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info(request.getRequestURI());
-        if (Constant.allowedUrls.stream().anyMatch(request.getRequestURI()::startsWith)) {
+        if (Constant.allowedUrls.contains(request.getRequestURI())) {
             filterChain.doFilter(request, response); // 허용된 URL이면 필터 체인 계속 진행
             return;
         }

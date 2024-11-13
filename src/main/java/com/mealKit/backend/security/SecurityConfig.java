@@ -10,6 +10,7 @@ import com.mealKit.backend.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -60,7 +61,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://mealkit-hwanhees-projects-f9061560.vercel.app/", swagger, "https://www.mealshop.shop"));
+        configuration.setAllowedOrigins(List.of("https://mealkit-hwanhees-projects-f9061560.vercel.app/", swagger, "http://localhost:3000"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -75,13 +76,13 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers(Constant.allowedUrls.toArray(String[]::new));
+        return (web) -> web.ignoring()
+                .requestMatchers("/api/product/**");
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, UserRepository userRepository) throws Exception {
         http
-                .cors(AbstractHttpConfigurer::disable)
                 // CSRF 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
                 .userDetailsService(loginService)
@@ -95,16 +96,16 @@ public class SecurityConfig {
                 // OAuth2 로그인 설정
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(customSuccessHandler)
-                        //.authorizationEndpoint(auth -> auth.baseUri("/auth/google"))
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                 )
 
-                // 경로별 접근 허용 설정
+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(new AntPathRequestMatcher("/api/product/list/**")).permitAll()
-                        .requestMatchers(Constant.allowedUrls.toArray(String[]::new)).permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
+//                        .requestMatchers(Constant.NO_FILTER_URLS.toArray(String[]::new)).permitAll()
                         .anyRequest().authenticated()
                 )
+
 
 
                 // CORS 설정

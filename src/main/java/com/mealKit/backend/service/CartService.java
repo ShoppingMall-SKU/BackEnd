@@ -5,9 +5,14 @@ import com.mealKit.backend.dto.CartUserInfoDto;
 import com.mealKit.backend.domain.Product;
 import com.mealKit.backend.domain.User;
 import com.mealKit.backend.domain.Cart;
+import com.mealKit.backend.exception.CommonException;
+import com.mealKit.backend.exception.ErrorCode;
 import com.mealKit.backend.repository.CartRepository;
+import com.mealKit.backend.repository.ProductRepository;
+import com.mealKit.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +21,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CartService {
     private final CartRepository cartRepository;
+    private final UserRepository userRepository;
+    private final ProductRepository productRepository;
 
     //CRUD -> 장바구니
 
-    // Create Cart
-    public void createCart(User user, Product product, Integer quantity){
+    /**
+     * 장바구니 추가
+     * @param pid 유저 Pid
+     * @param productId 상품 아이디
+     * @param quantity 수량
+     */
+    // FIXME 효율성 수정 필요
+    @Transactional
+    public void createCart(String pid, Integer productId, Integer quantity) {
+        User user = userRepository.findByPid(pid).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+        Product product = productRepository.findById(productId).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RESOURCE));
+
         this.cartRepository.save(Cart.builder()
                         .product(product)
                         .quantity(quantity)

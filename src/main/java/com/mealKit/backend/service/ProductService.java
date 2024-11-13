@@ -8,13 +8,12 @@ import com.mealKit.backend.exception.ErrorCode;
 import com.mealKit.backend.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -50,7 +49,20 @@ public class ProductService {
         return this.productRepository.findById(id).orElseThrow((() -> new CommonException(ErrorCode.NOT_FOUND_RESOURCE)));
     }
 
+    public Map<String, Object> searchProduct(Integer page, String query){ // 이름 검색 조회
+        Pageable pageable = PageRequest.of(page, countsPerPage);
 
+        List<ProductResponseDto> searchResponse =
+                productRepository
+                        .search(query, pageable).get()
+                        .map(ProductResponseDto::toEntity).toList();
+
+        Map<String, Object> ProductPageResponse = new HashMap<>();
+
+        ProductPageResponse.put("page", page);
+        ProductPageResponse.put("list", searchResponse);
+        return ProductPageResponse;
+    }
 
     public Product getProductByName(String name){
         Optional<Product> product = this.productRepository.findByName(name);
@@ -65,7 +77,7 @@ public class ProductService {
         orders.add(new Sort.Order(Sort.Direction.DESC, "createDate"));
         Pageable pageable = PageRequest.of(page, countsPerPage, Sort.by(orders));
 
-        log.info(productRepository.findAll(pageable).get().toString());
+        //log.info(productRepository.findAll(pageable).get().toString());
         List<ProductResponseDto> ProductResponse =
                 productRepository
                         .findAll(pageable).get()
@@ -103,13 +115,21 @@ public class ProductService {
     }
 
     // 수량 변경
-    public int modifiedStock(int stock){
-        if(stock >= 0){
-            return stock;
-        }else{
-            throw new RuntimeException("음수는 불가능 합니다.");
+    @Transactional
+    public void modifyStock(Integer id, Integer quantity){
+        Product product = productRepository.findById(id).orElseThrow((() -> new CommonException(ErrorCode.NOT_FOUND_RESOURCE)));
+
+        Integer afterStock = product.getStock() - quantity;
+
+        if(afterStock >= 0){
+            product.setStock(product.getStock() - quantity);
+            //System.out.println(afterStock);
+            //productRepository.save(product);
+        } else {
+            throw new CommonException(ErrorCode.SERVER_ERROR);
         }
     }
+
     // Delete Product
     public void deleteProduct(Product product){
         this.productRepository.delete(product);

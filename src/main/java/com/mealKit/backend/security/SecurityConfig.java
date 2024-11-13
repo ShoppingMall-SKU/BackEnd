@@ -14,13 +14,18 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -55,7 +60,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", swagger, "https://www.mealshop.shop"));
+        configuration.setAllowedOrigins(List.of("https://mealkit-hwanhees-projects-f9061560.vercel.app/", swagger, "https://www.mealshop.shop"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -68,6 +73,10 @@ public class SecurityConfig {
         return source;
     }
 
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers(Constant.allowedUrls.toArray(String[]::new));
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, UserRepository userRepository) throws Exception {
@@ -92,17 +101,19 @@ public class SecurityConfig {
 
                 // 경로별 접근 허용 설정
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(Constant.allowedUrls).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/product/list/**")).permitAll()
+                        .requestMatchers(Constant.allowedUrls.toArray(String[]::new)).permitAll()
                         .anyRequest().authenticated()
                 )
+
 
                 // CORS 설정
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 // JWT 필터 추가
-                .addFilterAfter(new JwtFilter(redisService, userRepository, jwtUtil), OAuth2LoginAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(redisService, userRepository, jwtUtil), OAuth2LoginAuthenticationFilter.class)
                 .addFilterBefore(new JwtFilter(redisService, userRepository ,jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
 
         return http.build();
     }

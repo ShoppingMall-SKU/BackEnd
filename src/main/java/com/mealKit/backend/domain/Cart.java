@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Entity
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,6 +22,10 @@ public class Cart {
     @Setter
     private Integer quantity;
 
+    @Setter
+    @Column(name = "use_yn")
+    private Boolean useYn;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -34,5 +39,6 @@ public class Cart {
         this.quantity = quantity;
         this.user = user;
         this.product = product;
+        this.useYn = true;
     }
 }

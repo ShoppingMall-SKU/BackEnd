@@ -49,12 +49,10 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info(request.getRequestURI());
-        if(Arrays.stream(Constant.allowedUrls).toList().contains(request.getRequestURI())) {
-            filterChain.doFilter(request, response);
+        if (Constant.allowedUrls.stream().anyMatch(request.getRequestURI()::startsWith)) {
+            filterChain.doFilter(request, response); // 허용된 URL이면 필터 체인 계속 진행
             return;
         }
-
-
         // 토큰
         String token = resolveToken(request);
 

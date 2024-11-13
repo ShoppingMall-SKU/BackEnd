@@ -5,16 +5,21 @@ import com.mealKit.backend.dto.ProductPostDto;
 import com.mealKit.backend.exception.ResponseDto;
 import com.mealKit.backend.service.ProductService;
 import com.mealKit.backend.domain.Product;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import retrofit2.http.Path;
 
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/product")
+@Tag(name = "product")
 public class ProductController {
 
     private final ProductService productService;
@@ -23,14 +28,12 @@ public class ProductController {
     public ResponseDto<?> getProductList(@PathVariable("page") Integer page){
         return ResponseDto.ok(this.productService.getAll(page));
     }
-    @GetMapping("/list") // 검색기능 test완
-    public ResponseEntity<List<Product>> getProductByName(@RequestParam("query") String name) {
-        List<Product> product = productService.searchByName(name);
-        // 데이터가 없는 경우 빈 리스트 반환
-        if (product.isEmpty()) {
-            return ResponseEntity.ok(Collections.emptyList());
-        }
-        return ResponseEntity.ok(product);
+
+    @GetMapping("/search/{page}") // 검색기능
+    public ResponseEntity<?> getProductByName(@PathVariable("page") Integer page,
+                                              @RequestParam("query") String query) {
+        log.info(query);
+        return ResponseEntity.ok(this.productService.searchProduct(page, query));
     }
 
     @GetMapping("/list/brands/{brand}") // brand별 검색 기능 test완

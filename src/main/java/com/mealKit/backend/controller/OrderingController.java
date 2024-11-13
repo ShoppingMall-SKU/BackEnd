@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+// TODO 결제 로직 구현 동시성 제어
 @RestController
 @RequestMapping("/api/ordering")
 @RequiredArgsConstructor

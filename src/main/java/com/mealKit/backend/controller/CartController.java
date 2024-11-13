@@ -17,12 +17,12 @@ import java.util.List;
 public class CartController {
     private final CartService cartService;
 
-    @PostMapping("/carts") // test완
-    public ResponseEntity<String> postCart(@RequestBody CartDto cartDto){
-        cartService.createCart(cartDto.getUser(),
-                cartDto.getProduct(), cartDto.getQuantity());
-        return ResponseEntity.ok("Cart created successfully!");
-    }
+//    @PostMapping("/carts") // test완
+//    public ResponseEntity<String> postCart(@RequestBody CartDto cartDto){
+//        cartService.createCart(cartDto.getUser(),
+//                cartDto.getProduct(), cartDto.getQuantity());
+//        return ResponseEntity.ok("Cart created successfully!");
+//    }
 
     @GetMapping("/user/{userId}") // test완
     public ResponseEntity<List<CartUserInfoDto>> getCartListByUserId(@PathVariable int userId){

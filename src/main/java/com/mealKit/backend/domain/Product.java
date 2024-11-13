@@ -36,6 +36,7 @@ public class Product {
     @Column(name = "sale")
     private Integer sale;
 
+    @Setter
     @Column(name = "stock")
     private Integer stock;
 

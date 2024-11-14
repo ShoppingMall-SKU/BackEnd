@@ -10,17 +10,23 @@ import com.mealKit.backend.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -55,7 +61,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", swagger, "https://www.mealshop.shop"));
+        configuration.setAllowedOrigins(List.of("https://mealkit-hwanhees-projects-f9061560.vercel.app/", swagger, "http://localhost:3000"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -68,11 +74,15 @@ public class SecurityConfig {
         return source;
     }
 
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring()
+                .requestMatchers("/api/product/**");
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, UserRepository userRepository) throws Exception {
         http
-                .cors(AbstractHttpConfigurer::disable)
                 // CSRF 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
                 .userDetailsService(loginService)
@@ -86,23 +96,25 @@ public class SecurityConfig {
                 // OAuth2 로그인 설정
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(customSuccessHandler)
-                        //.authorizationEndpoint(auth -> auth.baseUri("/auth/google"))
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                 )
 
-                // 경로별 접근 허용 설정
+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(Constant.allowedUrls).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
+//                        .requestMatchers(Constant.NO_FILTER_URLS.toArray(String[]::new)).permitAll()
                         .anyRequest().authenticated()
                 )
+
+
 
                 // CORS 설정
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 // JWT 필터 추가
-                .addFilterAfter(new JwtFilter(redisService, userRepository, jwtUtil), OAuth2LoginAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(redisService, userRepository, jwtUtil), OAuth2LoginAuthenticationFilter.class)
                 .addFilterBefore(new JwtFilter(redisService, userRepository ,jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
 
         return http.build();
     }

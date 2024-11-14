@@ -2,23 +2,27 @@ package com.mealKit.backend.security;
 
 import java.util.List;
 
+/**
+ * @serial
+ */
 public class Constant {
 
-    public static String[] allowedUrls = {
+    public static List<String> NO_FILTER_URLS = List.of(
             "/",
-            "/oauth2/**",
+            "/oauth2/*",
             "/auth/**",
-            "/login/**",
+            "/login/oauth2/code/**",
             "/auth/google",
-            "/api-ui.html",
-            "/swagger-ui/index.html",
-            "/api-docs",
-            "/v3/api-docs/**",
-            "/api-docs/**",
-            "/api/user/login/**",
-            "/api/user/signup/**",
+            "/favicon.ico",
             "/api/product/list",
-            "/api/product/detail/**",
-    };
+            "/api/user/login"
+    );
+
+    /**
+     * @implNote 필터 안거치는 uri 목록
+     */
+    public static List<String> allowedUrls = List.of(
+        "/login/oauth2/code/google", "/swagger-ui/**"
+    );
 
 }

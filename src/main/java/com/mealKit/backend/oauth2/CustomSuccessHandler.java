@@ -48,7 +48,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String token = jwtUtil.createJwt(pid, pt, role, 1000*60*3L);
         response.addCookie(createCookie("Authorization", token));
-        //log.info(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        log.info(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
         if (role.equals("ROLE_GUEST")){
             String email = customUserDetails.getEmail();
             response.sendRedirect(client + "/register?email="+ email); // 회원가입 폼으로

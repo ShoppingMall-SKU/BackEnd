@@ -59,11 +59,32 @@ jobs:
           port: ${{ secrets.PORT }}
           # 도커 작업
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/mealkit:latest
-            docker stop $(docker ps -a -q)
-            docker run -d --log-driver=syslog -p 8080:8080 -e SPRING_PROFILES_ACTIVE=prod ${{ secrets.DOCKER_USERNAME }}/mealkit:latest
-            docker rm $(docker ps --filter 'status=exited' -a -q)
+            # 이전 컨테이너 중지 및 삭제
+            docker stop $(docker ps -a -q) || true
+            docker rm $(docker ps -a -q) || true
+            
+            # 기존 이미지를 먼저 삭제하여 중복 방지
             docker image prune -a -f
+
+            # 새 이미지 가져오기 및 실행
+            docker pull ${{ secrets.DOCKER_USERNAME }}/mealkit:latest
+            docker run -d --log-driver=syslog -p 8080:8080 -e SPRING_PROFILES_ACTIVE=prod ${{ secrets.DOCKER_USERNAME }}/mealkit:latest
+
+
+      # - name: Deploy
+      #   uses: appleboy/ssh-action@v1.0.3
+      #   with:
+      #     host: ${{ secrets.HOST }} # EC2 인스턴스 퍼블릭 DNS
+      #     username: ubuntu
+      #     key: ${{ secrets.PRIVATE_KEY }} # pem 키
+      #     port: ${{ secrets.PORT }}
+      #     # 도커 작업
+      #     script: |
+      #       docker pull ${{ secrets.DOCKER_USERNAME }}/mealkit:latest
+      #       docker stop $(docker ps -a -q)
+      #       docker run -d --log-driver=syslog -p 8080:8080 -e SPRING_PROFILES_ACTIVE=prod ${{ secrets.DOCKER_USERNAME }}/mealkit:latest
+      #       docker rm $(docker ps --filter 'status=exited' -a -q)
+      #       docker image prune -a -f
 
       # - name: Generate and submit dependency graph
       #   uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0

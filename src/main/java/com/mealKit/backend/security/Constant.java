@@ -15,7 +15,9 @@ public class Constant {
             "/auth/google",
             "/favicon.ico",
             "/api/product/list",
-            "/api/user/login"
+            "/api/user/login",
+            "/api/user/social/signup/**",
+            "/api/user/signup"
     );
 
     /**

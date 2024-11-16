@@ -58,33 +58,24 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-          
+            # 최신 이미지 pull
             docker pull ${{ secrets.DOCKER_USERNAME }}/mealkit:latest
-            # 기존 컨테이너 중지 및 삭제
-            docker stop mealkit_container || true
-            docker rm mealkit_container || true
+            
+            # 기존 컨테이너 중지 및 삭제 (컨테이너가 존재하지 않아도 무시)
+            docker ps -q --filter "name=mealkit_container" | grep -q . && docker stop mealkit_container || true
+            docker ps -a -q --filter "name=mealkit_container" | grep -q . && docker rm mealkit_container || true
             
             # 새로운 컨테이너 실행
-            docker run --name mealkit_container -d --log-driver=syslog -p 8080:8080 -e SPRING_PROFILES_ACTIVE=prod ${{ secrets.DOCKER_USERNAME }}/mealkit:latest
+            docker run --name mealkit_container -d \
+              --log-driver=syslog \
+              -p 8080:8080 \
+              -e SPRING_PROFILES_ACTIVE=prod \
+              ${{ secrets.DOCKER_USERNAME }}/mealkit:latest
             
             # 사용되지 않는 컨테이너 및 이미지 정리
             docker container prune -f
             docker image prune -f
 
-      # - name: Deploy
-      #   uses: appleboy/ssh-action@v1.0.3
-      #   with:
-      #     host: ${{ secrets.HOST }} # EC2 인스턴스 퍼블릭 DNS
-      #     username: ubuntu
-      #     key: ${{ secrets.PRIVATE_KEY }} # pem 키
-      #     port: ${{ secrets.PORT }}
-      #     # 도커 작업
-      #     script: |
-      #       docker pull ${{ secrets.DOCKER_USERNAME }}/mealkit:latest
-      #       docker stop $(docker ps -a -q)
-      #       docker run -d --log-driver=syslog -p 8080:8080 -e SPRING_PROFILES_ACTIVE=prod ${{ secrets.DOCKER_USERNAME }}/mealkit:latest
-      #       docker rm $(docker ps --filter 'status=exited' -a -q)
-      #       docker image prune -a -f
 
       # - name: Generate and submit dependency graph
       #   uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0

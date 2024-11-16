@@ -47,8 +47,8 @@ public class AppConfig extends WebMvcConfigurationSupport {
     public void addCorsMappings(CorsRegistry corsRegistry) {
         corsRegistry.addMapping("/**")
                 .allowedOrigins("https://mealshop-shop.vercel.app/", "http://localhost:3000")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .exposedHeaders("*")
-                .allowCredentials(true)
-                .allowedHeaders("*");
+                .allowCredentials(true);
     }
 }

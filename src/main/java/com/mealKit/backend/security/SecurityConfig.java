@@ -10,6 +10,7 @@ import com.mealKit.backend.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -55,7 +56,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://mealkit-hwanhees-projects-f9061560.vercel.app/", swagger, "http://localhost:3000"));
+        configuration.setAllowedOrigins(List.of("https://mealshop-shop.vercel.app/", swagger, "http://localhost:3000"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -71,6 +72,8 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
+ //               .requestMatchers("/api/user/social/signup/**")
+//                .requestMatchers("/api/user/login/**")
                 .requestMatchers("/api/product/**");
     }
 
@@ -95,6 +98,8 @@ public class SecurityConfig {
 
 
                 .authorizeHttpRequests(auth -> auth
+                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                .requestMatchers(Constant.NO_FILTER_URLS.toArray(String[] :: new)).permitAll()
 //                        .requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
 //                        .requestMatchers(Constant.NO_FILTER_URLS.toArray(String[]::new)).permitAll()
                         .anyRequest().authenticated()

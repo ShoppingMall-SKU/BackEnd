@@ -27,7 +27,7 @@ public class UserController {
     private final UserService userService;
 
     // 소셜 로그인
-    @PatchMapping("/social/signup/{email}")
+    @PutMapping("/social/signup/{email}")
     public ResponseDto<String> socialSignup(@PathVariable String email, @RequestBody @Valid UserSocialSignUpDTO socialDto) {
         return ResponseDto.ok(String.valueOf(userService.socialSignUp(email, socialDto)));
     }

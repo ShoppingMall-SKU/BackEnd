@@ -46,8 +46,8 @@ public class CartService {
     }
 
     // Read Cart
-    public List<CartUserInfoDto> getList(int id){ // test 완
-        List<Cart> cartList = cartRepository.findByUserId(id);
+    public List<CartUserInfoDto> getList(String pid){ // test 완
+        List<Cart> cartList = cartRepository.findByUserPid(pid);
         List<CartUserInfoDto> cartUserInfoDtoList = new ArrayList<>();
 
         for (Cart cart : cartList){
@@ -60,16 +60,10 @@ public class CartService {
         return cartUserInfoDtoList;
     }
 
-    // cartId로 Cart조회
-    public Cart getCartById(int id){
-        return this.cartRepository.findById(id);
-    }
-
-    // cartId로 userId 찾기
-    public int getUserIdByCart(int cartId){
-        Cart cart = getCartById(cartId);
-        return  cart.getUser().getId();
-    }
+//    // cartId로 Cart조회
+//    public Cart getCartById(int id){
+//        return this.cartRepository.findById(id);
+//    }
 
     // Update Cart
     public void modifiedCart(Cart cart, int quantity){
@@ -77,9 +71,9 @@ public class CartService {
         this.cartRepository.save(cart);
     }
 
-    // Delete Cart
-    public void deleteCart(int id){
-        this.cartRepository.delete(getCartById(id));
-    }
+//    // Delete Cart
+//    public void deleteCart(int id){
+//        this.cartRepository.delete(getList(id));
+//    }
 
 }

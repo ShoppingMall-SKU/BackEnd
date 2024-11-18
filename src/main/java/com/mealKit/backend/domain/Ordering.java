@@ -49,7 +49,7 @@ public class Ordering {
     private Integer totalPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_pid")
     private User user;
 
     @Builder

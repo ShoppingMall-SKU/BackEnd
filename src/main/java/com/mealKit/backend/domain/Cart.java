@@ -27,7 +27,7 @@ public class Cart {
     private Boolean useYn;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_pid", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)

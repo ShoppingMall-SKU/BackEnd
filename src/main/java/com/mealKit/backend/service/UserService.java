@@ -76,39 +76,42 @@ public class UserService {
     }
     // 유저 role 수정
     @Transactional
-    public void modifyRoleUser(Integer userId) {
-        Optional<User> user = userRepository.findById(userId);
+    public Boolean modifyRoleUser(String userPid) {
+        Optional<User> user = userRepository.findByPid(userPid);
         if (user.isPresent()){
             user.get().setRole(UserRole.ROLE_USER);
+            return Boolean.TRUE;
         }else{
             throw new CommonException(ErrorCode.NOT_FOUND_USER);
         }
     }
     @Transactional
-    public void modifyRoleAdmin(Integer userId) {
-        Optional<User> user = userRepository.findById(userId);
+    public Boolean modifyRoleAdmin(String userPid) {
+        Optional<User> user = userRepository.findByPid(userPid);
         if (user.isPresent()){
             user.get().setRole(UserRole.ROLE_ADMIN);
+            return Boolean.TRUE;
         }else{
             throw new CommonException(ErrorCode.NOT_FOUND_USER);
         }
     }
     // 비밀번호 수정 (일반 로그인만)
     @Transactional
-    public void modifyPassword(Integer userId, String password) {
-        Optional<User> user = userRepository.findById(userId);
+    public Boolean modifyPassword(String userPid, String password) {
+        Optional<User> user = userRepository.findByPid(userPid);
         if (password.isBlank()){
             throw new CommonException(ErrorCode.NOT_FOUND_RESOURCE);
         }
         if (user.isPresent()){
             user.get().setPassword(encoder.encode(password));
+            return Boolean.TRUE;
         }else{
             throw new CommonException(ErrorCode.NOT_FOUND_USER);
         }
     }
     // 주소 수정
     @Transactional
-    public void modifyAddress(Integer userId, String zipcode, String streetAdr, String detailAdr) {
+    public Boolean modifyAddress(String userPid, String zipcode, String streetAdr, String detailAdr) {
         if (zipcode.isBlank()){
             throw new CommonException(ErrorCode.NOT_FOUND_RESOURCE);
         }
@@ -118,24 +121,26 @@ public class UserService {
         if (detailAdr.isBlank()){
             throw new CommonException(ErrorCode.NOT_FOUND_RESOURCE);
         }
-        Optional<User> user = userRepository.findById(userId);
+        Optional<User> user = userRepository.findByPid(userPid);
         if (user.isPresent()){
             user.get().setAddress(zipcode);
             user.get().setStreetAddress(streetAdr);
             user.get().setDetailAddress(detailAdr);
+            return Boolean.TRUE;
         }else{
             throw new CommonException(ErrorCode.NOT_FOUND_USER);
         }
     }
     // 핸드폰 수정
     @Transactional
-    public void modifyPhone(Integer userId, String phone) {
-        Optional<User> user = userRepository.findById(userId);
+    public Boolean modifyPhone(String userPid, String phone) {
+        Optional<User> user = userRepository.findByPid(userPid);
         if (phone.isBlank()){
             throw new CommonException(ErrorCode.NOT_FOUND_RESOURCE);
         }
         if (user.isPresent()){
             user.get().setPhone(phone);
+            return Boolean.TRUE;
         }else{
             throw new CommonException(ErrorCode.NOT_FOUND_USER);
         }

@@ -3,7 +3,8 @@ package com.mealKit.backend.security;
 import com.mealKit.backend.jwt.JwtFilter;
 import com.mealKit.backend.jwt.JwtUtil;
 import com.mealKit.backend.oauth2.CustomOAuth2UserService;
-import com.mealKit.backend.oauth2.CustomSuccessHandler;
+import com.mealKit.backend.oauth2.OAuth2LoginFailureHandler;
+import com.mealKit.backend.oauth2.OAuth2LoginSuccessHandler;
 import com.mealKit.backend.redis.RedisService;
 import com.mealKit.backend.repository.UserRepository;
 import com.mealKit.backend.service.LoginService;
@@ -35,13 +36,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final CustomSuccessHandler customSuccessHandler;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final RedisService redisService;
     private final JwtUtil jwtUtil;
     private final LoginService loginService;
-
-
-    private final String swagger = "http://localhost:8080";
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -56,7 +55,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://mealshop-shop.vercel.app/", swagger, "http://localhost:3000"));
+        configuration.setAllowedOrigins(Constant.ALLOWED_DOMAINS);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -69,12 +68,14 @@ public class SecurityConfig {
         return source;
     }
 
+    /**
+     * 필터를 무시하는 메소드
+     * @return 필터 무시 메소드 uri
+     */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
- //               .requestMatchers("/api/user/social/signup/**")
-//                .requestMatchers("/api/user/login/**")
-                .requestMatchers("/api/product/**");
+           .requestMatchers(HttpMethod.GET, "/api/product/**");
     }
 
     @Bean
@@ -92,16 +93,15 @@ public class SecurityConfig {
 
                 // OAuth2 로그인 설정
                 .oauth2Login(oauth2 -> oauth2
-                        .successHandler(customSuccessHandler)
+                        .successHandler(oAuth2LoginSuccessHandler)
+                        .failureHandler(oAuth2LoginFailureHandler)
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                 )
 
 
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                .requestMatchers(Constant.NO_FILTER_URLS.toArray(String[] :: new)).permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
-//                        .requestMatchers(Constant.NO_FILTER_URLS.toArray(String[]::new)).permitAll()
+                                .requestMatchers(Constant.NO_SECURITY_URLS.toArray(String[] :: new)).permitAll()
                         .anyRequest().authenticated()
                 )
 
@@ -111,7 +111,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 // JWT 필터 추가
-                .addFilterBefore(new JwtFilter(redisService, userRepository, jwtUtil), OAuth2LoginAuthenticationFilter.class)
+                .addFilterAfter(new JwtFilter(redisService, userRepository, jwtUtil), OAuth2LoginAuthenticationFilter.class)
                 .addFilterBefore(new JwtFilter(redisService, userRepository ,jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
 

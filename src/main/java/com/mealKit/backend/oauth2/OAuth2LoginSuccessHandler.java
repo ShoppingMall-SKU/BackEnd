@@ -21,7 +21,7 @@ import java.util.Iterator;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
 

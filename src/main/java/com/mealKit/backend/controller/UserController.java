@@ -40,36 +40,31 @@ public class UserController {
     }
 
     // 비밀번호 변경
-    @PatchMapping("/modify/password/{id}")
-    public ResponseDto<String> modifyPassword(@PathVariable Integer id, @RequestBody String password) {
-        userService.modifyPassword(id, password);
-        return ResponseDto.ok("userService.modifyPassword : " + id);
+    @PatchMapping("/modify/password")
+    public ResponseDto<Boolean> modifyPassword(@Pid String pid, @RequestBody String password) {
+        return ResponseDto.ok(userService.modifyPassword(pid, password));
     }
 
     // 핸드폰 변경
-    @PatchMapping("/modify/phone/{id}")
-    public ResponseDto<String> modifyPhone(@PathVariable Integer id, @RequestBody String phone) {
-        userService.modifyPhone(id, phone);
-        return ResponseDto.ok("userService.modifyPhone : " + id);
+    @PatchMapping("/modify/phone")
+    public ResponseDto<Boolean> modifyPhone(@Pid String pid, @RequestBody String phone) {
+        return ResponseDto.ok(userService.modifyPhone(pid, phone));
     }
 
     // 주소 변경
-    @PatchMapping("/modify/address/{id}")
-    public ResponseDto<String> modifyAddress(@PathVariable Integer id, @RequestBody Map<?,?> address) {
-        userService.modifyAddress(id, address.get("zipcode").toString(), address.get("streetAdr").toString(), address.get("detailAdr").toString());
-        return ResponseDto.ok("userService.modifyAddress : " + id);
+    @PatchMapping("/modify/address")
+    public ResponseDto<Boolean> modifyAddress(@Pid String pid, @RequestBody Map<String, String> address) {
+        return ResponseDto.ok(userService.modifyAddress(pid, address.get("zipcode"), address.get("streetAdr"), address.get("detailAdr")));
     }
 
-    @PatchMapping("/modify/admin/{id}")
-    public ResponseDto<String> modifyRoleAdmin(@PathVariable Integer id) {
-        userService.modifyRoleAdmin(id);
-        return ResponseDto.ok("userService.modifyRoleAdmin : " + id);
+    @PatchMapping("/modify/admin")
+    public ResponseDto<Boolean> modifyRoleAdmin(@Pid String pid) {
+        return ResponseDto.ok(userService.modifyRoleAdmin(pid));
     }
 
-    @PatchMapping("/modify/user/{id}")
-    public ResponseDto<String> modifyRoleUser(@PathVariable Integer id) {
-        userService.modifyRoleUser(id);
-        return ResponseDto.ok("userService.modifyRoleUser : " + id);
+    @PatchMapping("/modify/user")
+    public ResponseDto<Boolean> modifyRoleUser(@Pid String pid) {
+        return ResponseDto.ok(userService.modifyRoleUser(pid));
     }
 
     // 프로필 조회 목적

@@ -1,10 +1,10 @@
-package com.mealKit.backend.dto;
+package com.mealKit.backend.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
-public class UserSocialSignUpDTO {
+public class UserSocialSignUpRequestDTO {
 
     @NotBlank
     private String phone;

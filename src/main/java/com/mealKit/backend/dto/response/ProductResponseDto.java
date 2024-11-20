@@ -1,4 +1,4 @@
-package com.mealKit.backend.dto;
+package com.mealKit.backend.dto.response;
 
 import com.mealKit.backend.domain.Product;
 import lombok.*;

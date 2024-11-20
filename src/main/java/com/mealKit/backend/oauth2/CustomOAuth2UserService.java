@@ -6,10 +6,11 @@ import com.mealKit.backend.domain.enums.UserRole;
 import com.mealKit.backend.exception.CommonException;
 import com.mealKit.backend.exception.ErrorCode;
 import com.mealKit.backend.jwt.JwtUtil;
-import com.mealKit.backend.redis.RedisService;
+import com.mealKit.backend.service.RedisService;
 import com.mealKit.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -29,7 +30,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         try {
+            log.info("******************1");
+
             OAuth2User oAuth2User = super.loadUser(userRequest);
+
 
             String registrationId = userRequest.getClientRegistration().getRegistrationId();
             final OAuth2Response oAuth2Response;
@@ -41,13 +45,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             }else {
                 throw new CommonException(ErrorCode.AUTH_SERVER_USER_INFO_ERROR);
             }
-            //log.info(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
-            String refreshToken = jwtUtil.createRefreshToken();
-            String pid = oAuth2Response.getProviderId();
-            redisService.save(pid, refreshToken);
+            String pid = oAuth2Response.getPid();
 
             return new CustomOAuth2User(
-                    userRepository.findByPid(pid)
+                    userRepository.findByEmail(oAuth2Response.getEmail())
                     .orElseGet(
                             () -> {
                                 User user = User.builder()
@@ -56,7 +57,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                                         .name(oAuth2Response.getName())
                                         .role(UserRole.ROLE_GUEST)
                                         .providerType(providerType)
-                                        .refreshToken(refreshToken)
+                                        .password("NULL")
                                         .build();
                                 userRepository.save(user);
                                 return user;

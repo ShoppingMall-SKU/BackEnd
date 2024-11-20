@@ -2,21 +2,19 @@ package com.mealKit.backend.controller;
 
 
 
-import com.mealKit.backend.dto.UserDetailDTO;
-import com.mealKit.backend.dto.UserLoginDTO;
-import com.mealKit.backend.dto.UserSignUpDTO;
-import com.mealKit.backend.dto.UserSocialSignUpDTO;
+import com.mealKit.backend.dto.request.UserLoginRequestDto;
+import com.mealKit.backend.dto.response.UserDetailResponseDTO;
+import com.mealKit.backend.dto.request.UserSignUpRequestDTO;
+import com.mealKit.backend.dto.request.UserSocialSignUpRequestDTO;
 import com.mealKit.backend.exception.ResponseDto;
-import com.mealKit.backend.interceptor.Pid;
+import com.mealKit.backend.annotation.Pid;
 import com.mealKit.backend.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 @RestController
@@ -28,7 +26,7 @@ public class UserController {
 
     // 소셜 로그인
     @PutMapping("/social/signup/{email}")
-    public ResponseDto<String> socialSignup(@PathVariable String email, @RequestBody @Valid UserSocialSignUpDTO socialDto) {
+    public ResponseDto<String> socialSignup(@PathVariable String email, @RequestBody @Valid UserSocialSignUpRequestDTO socialDto) {
         return ResponseDto.ok(String.valueOf(userService.socialSignUp(email, socialDto)));
     }
 
@@ -40,41 +38,36 @@ public class UserController {
     }
 
     // 비밀번호 변경
-    @PatchMapping("/modify/password/{id}")
-    public ResponseDto<String> modifyPassword(@PathVariable Integer id, @RequestBody String password) {
-        userService.modifyPassword(id, password);
-        return ResponseDto.ok("userService.modifyPassword : " + id);
+    @PatchMapping("/modify/password")
+    public ResponseDto<Boolean> modifyPassword(@Pid String pid, @RequestBody String password) {
+        return ResponseDto.ok(userService.modifyPassword(pid, password));
     }
 
     // 핸드폰 변경
-    @PatchMapping("/modify/phone/{id}")
-    public ResponseDto<String> modifyPhone(@PathVariable Integer id, @RequestBody String phone) {
-        userService.modifyPhone(id, phone);
-        return ResponseDto.ok("userService.modifyPhone : " + id);
+    @PatchMapping("/modify/phone")
+    public ResponseDto<Boolean> modifyPhone(@Pid String pid, @RequestBody String phone) {
+        return ResponseDto.ok(userService.modifyPhone(pid, phone));
     }
 
     // 주소 변경
-    @PatchMapping("/modify/address/{id}")
-    public ResponseDto<String> modifyAddress(@PathVariable Integer id, @RequestBody Map<?,?> address) {
-        userService.modifyAddress(id, address.get("zipcode").toString(), address.get("streetAdr").toString(), address.get("detailAdr").toString());
-        return ResponseDto.ok("userService.modifyAddress : " + id);
+    @PatchMapping("/modify/address")
+    public ResponseDto<Boolean> modifyAddress(@Pid String pid, @RequestBody Map<String, String> address) {
+        return ResponseDto.ok(userService.modifyAddress(pid, address.get("zipcode"), address.get("streetAdr"), address.get("detailAdr")));
     }
 
-    @PatchMapping("/modify/admin/{id}")
-    public ResponseDto<String> modifyRoleAdmin(@PathVariable Integer id) {
-        userService.modifyRoleAdmin(id);
-        return ResponseDto.ok("userService.modifyRoleAdmin : " + id);
+    @PatchMapping("/modify/admin")
+    public ResponseDto<Boolean> modifyRoleAdmin(@Pid String pid) {
+        return ResponseDto.ok(userService.modifyRoleAdmin(pid));
     }
 
-    @PatchMapping("/modify/user/{id}")
-    public ResponseDto<String> modifyRoleUser(@PathVariable Integer id) {
-        userService.modifyRoleUser(id);
-        return ResponseDto.ok("userService.modifyRoleUser : " + id);
+    @PatchMapping("/modify/user")
+    public ResponseDto<Boolean> modifyRoleUser(@Pid String pid) {
+        return ResponseDto.ok(userService.modifyRoleUser(pid));
     }
 
     // 프로필 조회 목적
     @GetMapping("/info")
-    public ResponseDto<UserDetailDTO> getUserDetail(@Pid String pid, HttpServletResponse response) {
+    public ResponseDto<UserDetailResponseDTO> getUserDetail(@Pid String pid, HttpServletResponse response) {
         log.info(pid);
 //        response.setHeader("content-type", "application/json");
         return ResponseDto.ok(userService.getUserByPid(
@@ -89,13 +82,13 @@ public class UserController {
 
     // 폼 회원가입
     @PostMapping("/signup")
-    public ResponseDto<String> signUp(@RequestBody @Valid UserSignUpDTO userSignUpDTO) {
+    public ResponseDto<String> signUp(@RequestBody @Valid UserSignUpRequestDTO userSignUpDTO) {
         userService.signUp(userSignUpDTO);
         return ResponseDto.ok("userService.signUp");
     }
 
     @PostMapping("/login")
-    public ResponseDto<String> login(@RequestBody UserLoginDTO userLoginDTO) {
+    public ResponseDto<String> login(@RequestBody UserLoginRequestDto userLoginDTO) {
         //log.info("id : {}, pw : {}" , userLoginDTO.getEmail(), userLoginDTO.getPassword());
         return ResponseDto.ok(userService.login(
                 userLoginDTO

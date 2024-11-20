@@ -1,14 +1,11 @@
 package com.mealKit.backend.config;
 
 import com.mealKit.backend.interceptor.UserPidResolveInterceptor;
-import com.mealKit.backend.interceptor.UserPidResolver;
+import com.mealKit.backend.resolver.UserPidResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.config.annotation.*;
 
 import java.util.List;
 
@@ -19,8 +16,12 @@ public class AppConfig extends WebMvcConfigurationSupport {
     private final UserPidResolver userPidResolver;
 
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    public void configureViewResolvers(ViewResolverRegistry registry) {
+        registry.jsp("webapp/WEB-INF/views/", ".jsp");
+    }
 
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/favicon.ico")
                 .addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/js/**")
@@ -46,7 +47,7 @@ public class AppConfig extends WebMvcConfigurationSupport {
     @Override
     public void addCorsMappings(CorsRegistry corsRegistry) {
         corsRegistry.addMapping("/**")
-                .allowedOrigins("https://mealshop-shop.vercel.app/", "http://localhost:3000")
+                .allowedOrigins("https://www.mealshop.shop","https://mealshop-shop.vercel.app", "http://localhost:3000")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .exposedHeaders("*")
                 .allowCredentials(true);

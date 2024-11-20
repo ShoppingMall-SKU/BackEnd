@@ -1,4 +1,4 @@
-package com.mealKit.backend.redis;
+package com.mealKit.backend.redisson;
 
 import com.mealKit.backend.exception.CommonException;
 import com.mealKit.backend.exception.ErrorCode;

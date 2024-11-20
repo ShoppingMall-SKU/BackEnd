@@ -1,6 +1,12 @@
 package com.mealKit.backend.oauth2;
 
+import com.mealKit.backend.domain.User;
+import com.mealKit.backend.exception.CommonException;
+import com.mealKit.backend.exception.ErrorCode;
 import com.mealKit.backend.jwt.JwtUtil;
+import com.mealKit.backend.repository.UserRepository;
+import com.mealKit.backend.service.RedisService;
+import com.mealKit.backend.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +19,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -21,13 +28,16 @@ import java.util.Iterator;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
+    private final RedisService redisService;
+    private final UserRepository userRepository;
 
     @Value("${react.client}")
     private String client;
 
+    @Transactional
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
@@ -48,11 +58,17 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String token = jwtUtil.createJwt(pid, pt, role, 1000*60*3L);
         response.addCookie(createCookie("Authorization", token));
+        String refreshToken = jwtUtil.createRefreshToken();
+        User user = userRepository.findByPid(pid).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+        user.setRefreshToken(refreshToken);
+
         log.info(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
         if (role.equals("ROLE_GUEST")){
             String email = customUserDetails.getEmail();
+            redisService.save(pid, refreshToken);
             response.sendRedirect(client + "/register?email="+ email); // 회원가입 폼으로
-        }else{
+        }else {
+            redisService.save(pid, refreshToken);
             response.sendRedirect(client + "/");
         }
     }
@@ -64,6 +80,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setHttpOnly(false);
+        cookie.setDomain("mealshop-shop.vercel.app");
 
         return cookie;
     }

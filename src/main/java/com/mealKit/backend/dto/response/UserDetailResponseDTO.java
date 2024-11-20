@@ -1,4 +1,4 @@
-package com.mealKit.backend.dto;
+package com.mealKit.backend.dto.response;
 
 import com.mealKit.backend.domain.User;
 import com.mealKit.backend.domain.enums.ProviderType;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 // 프로필 조회 목적
 @Data
 @NoArgsConstructor
-public class UserDetailDTO {
+public class UserDetailResponseDTO {
     private String name;
 
     private String phone;
@@ -27,7 +27,7 @@ public class UserDetailDTO {
     private ProviderType providerType;
 
     @Builder
-    public UserDetailDTO(String name, String phone, String email, String address, String streetAdr,String detailAdr, UserRole role, ProviderType pt) {
+    public UserDetailResponseDTO(String name, String phone, String email, String address, String streetAdr, String detailAdr, UserRole role, ProviderType pt) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -37,13 +37,13 @@ public class UserDetailDTO {
         this.providerType = pt;
     }
 
-    public static UserDetailDTO toEntity(User user) {
-        return UserDetailDTO
+    public static UserDetailResponseDTO toEntity(User user) {
+        return UserDetailResponseDTO
                 .builder()
                 .name(user.getName())
                 .phone(user.getPhone())
                 .email(user.getEmail())
-                .address(user.getAddress())
+                .address(user.getZipcode())
                 .streetAdr(user.getStreetAddress())
                 .detailAdr(user.getDetailAddress())
                 .pt(user.getProviderType())

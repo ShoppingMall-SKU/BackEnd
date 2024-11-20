@@ -1,23 +1,18 @@
 package com.mealKit.backend.service;
 
+import com.mealKit.backend.domain.enums.ProviderType;
 import com.mealKit.backend.domain.enums.UserRole;
-import com.mealKit.backend.dto.UserDetailDTO;
-import com.mealKit.backend.dto.UserLoginDTO;
-import com.mealKit.backend.dto.UserSignUpDTO;
-import com.mealKit.backend.dto.UserSocialSignUpDTO;
+import com.mealKit.backend.dto.request.UserLoginRequestDto;
+import com.mealKit.backend.dto.response.UserDetailResponseDTO;
+import com.mealKit.backend.dto.request.UserSignUpRequestDTO;
+import com.mealKit.backend.dto.request.UserSocialSignUpRequestDTO;
 import com.mealKit.backend.exception.CommonException;
 import com.mealKit.backend.exception.ErrorCode;
-import com.mealKit.backend.jwt.JwtToken;
 import com.mealKit.backend.jwt.JwtUtil;
-import com.mealKit.backend.redis.RedisConfig;
+import com.mealKit.backend.config.RedisConfig;
 import com.mealKit.backend.domain.User;
-import com.mealKit.backend.redis.RedisService;
 import com.mealKit.backend.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,15 +20,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.security.Provider;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Service
@@ -51,20 +43,20 @@ public class UserService {
 
     //private final RedisConfig redisConfig;
 
-    public UserDetailDTO getUserByPid(String pid) {
+    public UserDetailResponseDTO getUserByPid(String pid) {
         User user = userRepository.findByPid(pid).orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
-        return UserDetailDTO.toEntity(user);
+        return UserDetailResponseDTO.toEntity(user);
     }
 
 
     // 회원가입(남은 내용 수정 기능)
     @Transactional
-    public Boolean socialSignUp(String email, UserSocialSignUpDTO socialDto) {
+    public Boolean socialSignUp(String email, UserSocialSignUpRequestDTO socialDto) {
 
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent()){
             user.get().setPhone(socialDto.getPhone());
-            user.get().setAddress(socialDto.getZipcode());
+            user.get().setZipcode(socialDto.getZipcode());
             user.get().setStreetAddress(socialDto.getStreetAdr());
             user.get().setDetailAddress(socialDto.getDetailAdr());
             user.get().setRole(UserRole.ROLE_USER);
@@ -76,39 +68,42 @@ public class UserService {
     }
     // 유저 role 수정
     @Transactional
-    public void modifyRoleUser(Integer userId) {
-        Optional<User> user = userRepository.findById(userId);
+    public Boolean modifyRoleUser(String userPid) {
+        Optional<User> user = userRepository.findByPid(userPid);
         if (user.isPresent()){
             user.get().setRole(UserRole.ROLE_USER);
+            return Boolean.TRUE;
         }else{
             throw new CommonException(ErrorCode.NOT_FOUND_USER);
         }
     }
     @Transactional
-    public void modifyRoleAdmin(Integer userId) {
-        Optional<User> user = userRepository.findById(userId);
+    public Boolean modifyRoleAdmin(String userPid) {
+        Optional<User> user = userRepository.findByPid(userPid);
         if (user.isPresent()){
             user.get().setRole(UserRole.ROLE_ADMIN);
+            return Boolean.TRUE;
         }else{
             throw new CommonException(ErrorCode.NOT_FOUND_USER);
         }
     }
     // 비밀번호 수정 (일반 로그인만)
     @Transactional
-    public void modifyPassword(Integer userId, String password) {
-        Optional<User> user = userRepository.findById(userId);
+    public Boolean modifyPassword(String userPid, String password) {
+        Optional<User> user = userRepository.findByPid(userPid);
         if (password.isBlank()){
             throw new CommonException(ErrorCode.NOT_FOUND_RESOURCE);
         }
         if (user.isPresent()){
             user.get().setPassword(encoder.encode(password));
+            return Boolean.TRUE;
         }else{
             throw new CommonException(ErrorCode.NOT_FOUND_USER);
         }
     }
     // 주소 수정
     @Transactional
-    public void modifyAddress(Integer userId, String zipcode, String streetAdr, String detailAdr) {
+    public Boolean modifyAddress(String userPid, String zipcode, String streetAdr, String detailAdr) {
         if (zipcode.isBlank()){
             throw new CommonException(ErrorCode.NOT_FOUND_RESOURCE);
         }
@@ -118,24 +113,26 @@ public class UserService {
         if (detailAdr.isBlank()){
             throw new CommonException(ErrorCode.NOT_FOUND_RESOURCE);
         }
-        Optional<User> user = userRepository.findById(userId);
+        Optional<User> user = userRepository.findByPid(userPid);
         if (user.isPresent()){
-            user.get().setAddress(zipcode);
+            user.get().setZipcode(zipcode);
             user.get().setStreetAddress(streetAdr);
             user.get().setDetailAddress(detailAdr);
+            return Boolean.TRUE;
         }else{
             throw new CommonException(ErrorCode.NOT_FOUND_USER);
         }
     }
     // 핸드폰 수정
     @Transactional
-    public void modifyPhone(Integer userId, String phone) {
-        Optional<User> user = userRepository.findById(userId);
+    public Boolean modifyPhone(String userPid, String phone) {
+        Optional<User> user = userRepository.findByPid(userPid);
         if (phone.isBlank()){
             throw new CommonException(ErrorCode.NOT_FOUND_RESOURCE);
         }
         if (user.isPresent()){
             user.get().setPhone(phone);
+            return Boolean.TRUE;
         }else{
             throw new CommonException(ErrorCode.NOT_FOUND_USER);
         }
@@ -154,21 +151,22 @@ public class UserService {
 
 
     // 폼 회원가입
-    public void signUp (UserSignUpDTO userSignUpDTO) {
+    public void signUp (UserSignUpRequestDTO userSignUpDTO) {
 
         userRepository.save(User.builder()
                         .name(userSignUpDTO.getName())
                         .email(userSignUpDTO.getEmail())
                         .password(encoder.encode(userSignUpDTO.getPassword()))
                         .phone(userSignUpDTO.getPhone())
-                        .address(userSignUpDTO.getZipcode())
+                        .zipcode(userSignUpDTO.getZipcode())
                         .streetAddress(userSignUpDTO.getStreetAdr())
                         .detailAddress(userSignUpDTO.getDetailAdr())
+                        .providerType(ProviderType.NORMAL)
                         .role(UserRole.ROLE_USER)
                 .build());
     }
 
-    public String login(UserLoginDTO userLoginDTO) {
+    public String login(UserLoginRequestDto userLoginDTO) {
         String email = userLoginDTO.getEmail();
         String pw = userLoginDTO.getPassword();
         log.info("로그인 시도 : {}",email);

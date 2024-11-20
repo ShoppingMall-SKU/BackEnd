@@ -1,14 +1,13 @@
 package com.mealKit.backend.oauth2;
 
+import lombok.RequiredArgsConstructor;
+
 import java.util.Map;
 
+@RequiredArgsConstructor
 public class GoogleResponse implements OAuth2Response{
 
     private  final Map<String, Object> attribute;
-
-    public GoogleResponse(Map<String, Object> attribute) {
-        this.attribute = attribute;
-    }
 
     @Override
     public String getProvider() {
@@ -16,7 +15,7 @@ public class GoogleResponse implements OAuth2Response{
     }
 
     @Override
-    public String getProviderId() {
+    public String getPid() {
         return attribute.get("sub").toString();
     }
 

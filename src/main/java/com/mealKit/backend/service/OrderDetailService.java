@@ -1,7 +1,7 @@
 package com.mealKit.backend.service;
 
 
-import com.mealKit.backend.dto.OrderDetailDTO;
+import com.mealKit.backend.dto.response.OrderDetailResponseDto;
 import com.mealKit.backend.domain.Ordering;
 import com.mealKit.backend.domain.Product;
 import com.mealKit.backend.domain.OrderDetail;
@@ -37,20 +37,7 @@ public class OrderDetailService {
         return this.orderDetailRepository.findById(id).orElse(null);
     }
 
-    public List<OrderDetailDTO> getOrderDetailByOrdering(Ordering ordering) {
-        List<OrderDetailDTO> list = new ArrayList<>();
-        List<OrderDetail> orderDetailList = this.orderDetailRepository.findByOrdering(ordering);
 
-        for (OrderDetail od : orderDetailList) {
-            OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
-            orderDetailDTO.setProductName(od.getProduct().getName());
-            orderDetailDTO.setQuantity(od.getQuantity());
-            orderDetailDTO.setPrice(od.getPrice());
-            orderDetailDTO.setShipStatus(od.getShipStatus());
-            list.add(orderDetailDTO);
-        }
-        return list;
-    }
 
     public void updateShipStatus(OrderDetail orderDetail, String status) {
         orderDetail.setShipStatus(status);

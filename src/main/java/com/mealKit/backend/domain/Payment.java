@@ -21,7 +21,7 @@ public class Payment {
     private String method;
 
     @Column(name = "amount")
-    private Integer amount; // 배송비 포함 가격
+    private Long amount; // 배송비 포함 가격
 
     @Column(name = "payment_date")
     private LocalDateTime paymentDate;
@@ -31,7 +31,7 @@ public class Payment {
     private Ordering ordering;
 
     @Builder
-    public Payment(String method, Integer amount, LocalDateTime paymentDate, Ordering ordering) {
+    public Payment(String method, Long amount, LocalDateTime paymentDate, Ordering ordering) {
         this.method = method;
         this.amount = amount;
         this.paymentDate = paymentDate;

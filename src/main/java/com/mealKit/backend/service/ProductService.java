@@ -2,7 +2,7 @@ package com.mealKit.backend.service;
 
 import com.mealKit.backend.domain.Product;
 import com.mealKit.backend.domain.enums.ProductStatus;
-import com.mealKit.backend.dto.ProductResponseDto;
+import com.mealKit.backend.dto.response.ProductResponseDto;
 import com.mealKit.backend.exception.CommonException;
 import com.mealKit.backend.exception.ErrorCode;
 import com.mealKit.backend.repository.ProductRepository;

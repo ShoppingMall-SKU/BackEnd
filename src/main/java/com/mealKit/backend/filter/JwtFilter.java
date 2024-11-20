@@ -1,4 +1,4 @@
-package com.mealKit.backend.jwt;
+package com.mealKit.backend.filter;
 
 
 import com.mealKit.backend.domain.User;
@@ -6,13 +6,11 @@ import com.mealKit.backend.domain.enums.ProviderType;
 import com.mealKit.backend.domain.enums.UserRole;
 import com.mealKit.backend.exception.CommonException;
 import com.mealKit.backend.exception.ErrorCode;
-import com.mealKit.backend.interceptor.Pid;
+import com.mealKit.backend.jwt.JwtUtil;
 import com.mealKit.backend.oauth2.CustomOAuth2User;
-import com.mealKit.backend.redis.RedisConfig;
-import com.mealKit.backend.redis.RedisService;
+import com.mealKit.backend.service.RedisService;
 import com.mealKit.backend.repository.UserRepository;
 import com.mealKit.backend.security.Constant;
-import com.mealKit.backend.service.UserService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,9 +19,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.bcel.Const;
-import org.hibernate.annotations.Filter;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -32,16 +27,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
-    private static final List<String> NO_CHECK_LIST = new ArrayList<>();
     private final RedisService redisService;
     private final UserRepository userRepository;
 
@@ -50,14 +41,14 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info(request.getRequestURI());
-        if(request.getRequestURI().equals("/api/user/signup")) {
+        log.info(request.getHeader("Authorization"));
+
+        if (Constant.NO_FILTER_URLS.stream().anyMatch(request.getRequestURI()::startsWith)) {
             filterChain.doFilter(request, response);
             return;
         }
-        if (Constant.allowedUrls.contains(request.getRequestURI())) {
-            filterChain.doFilter(request, response); // 허용된 URL이면 필터 체인 계속 진행
-            return;
-        }
+
+        log.info("***************************");
         // 토큰
         String token = resolveToken(request);
 
@@ -93,7 +84,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 // 스프링 시큐리티 인증 토큰 생성
                 Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, "", customOAuth2User.getAuthorities());
-
+                log.info("******************************");
                 // 세션에 사용자 등록
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }

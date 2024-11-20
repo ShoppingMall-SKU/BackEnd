@@ -1,10 +1,9 @@
-package com.mealKit.backend.redis;
+package com.mealKit.backend.service;
 
+import com.mealKit.backend.config.RedisConfig;
 import com.mealKit.backend.exception.CommonException;
 import com.mealKit.backend.exception.ErrorCode;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service

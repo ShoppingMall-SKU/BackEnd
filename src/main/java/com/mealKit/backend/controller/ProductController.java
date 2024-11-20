@@ -1,7 +1,6 @@
 package com.mealKit.backend.controller;
 
-import com.mealKit.backend.dto.ProductResponseDto;
-import com.mealKit.backend.dto.ProductPostDto;
+import com.mealKit.backend.dto.response.ProductResponseDto;
 import com.mealKit.backend.exception.ResponseDto;
 import com.mealKit.backend.service.ProductService;
 import com.mealKit.backend.domain.Product;
@@ -10,9 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import retrofit2.http.Path;
 
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j

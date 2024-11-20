@@ -1,11 +1,11 @@
-package com.mealKit.backend.dto;
+package com.mealKit.backend.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 
 // 폼 로그인 목적
 @Getter
-public class UserSignUpDTO {
+public class UserSignUpRequestDTO {
 
     @NotBlank
     private String name;
@@ -29,7 +29,7 @@ public class UserSignUpDTO {
     private String detailAdr;
 
     @Builder
-    public UserSignUpDTO(String name, String password, String phone, String email, String zipcode, String streetAdr, String detailAdr) {
+    public UserSignUpRequestDTO(String name, String password, String phone, String email, String zipcode, String streetAdr, String detailAdr) {
         this.name = name;
         this.password = password;
         this.phone = phone;

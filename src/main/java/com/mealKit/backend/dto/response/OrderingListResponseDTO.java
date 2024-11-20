@@ -1,4 +1,4 @@
-package com.mealKit.backend.dto;
+package com.mealKit.backend.dto.response;
 
 
 import lombok.Getter;
@@ -10,9 +10,9 @@ import java.util.List;
 @Getter
 @Setter
 @JsonComponent
-public class OrderingListDTO {
+public class OrderingListResponseDTO {
     private String userEmail;
-    private List<OrderDetailDTO> list;
+    private List<OrderDetailResponseDto> list;
     private Integer totalPrice;
 
 }

@@ -1,4 +1,4 @@
-package com.mealKit.backend.dto;
+package com.mealKit.backend.dto.response;
 
 
 import lombok.Getter;
@@ -8,8 +8,8 @@ import org.springframework.boot.jackson.JsonComponent;
 @Getter
 @Setter
 @JsonComponent
-public class OrderDetailDTO {
-    private String productName;
+public class OrderDetailResponseDto {
+    private Integer productName;
 
     private String ShipStatus;
 

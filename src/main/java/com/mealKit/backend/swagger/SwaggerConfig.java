@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
+/**
+ * /api-docs로 검색하면 나옴.
+ */
 @Configuration
 public class SwaggerConfig {
     @Bean

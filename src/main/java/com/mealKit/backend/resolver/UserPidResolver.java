@@ -1,5 +1,6 @@
-package com.mealKit.backend.interceptor;
+package com.mealKit.backend.resolver;
 
+import com.mealKit.backend.annotation.Pid;
 import com.mealKit.backend.exception.CommonException;
 import com.mealKit.backend.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;

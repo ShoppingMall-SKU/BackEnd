@@ -1,6 +1,5 @@
 package com.mealKit.backend.controller;
 
-import com.mealKit.backend.dto.PaymentDTO;
 import com.mealKit.backend.service.PaymentService;
 import com.mealKit.backend.service.RefundService;
 import com.mealKit.backend.domain.Payment;

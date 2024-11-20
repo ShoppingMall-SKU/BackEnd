@@ -9,6 +9,7 @@ public class Constant {
 
     static final List<String> ALLOWED_DOMAINS = List.of(
             "https://www.mealshop.shop",
+            "https://mealshop-shop.vercel.app",
             "http://localhost:8080",
             "http://localhost:3000"
     );
@@ -27,7 +28,9 @@ public class Constant {
             "/api/user/signup",
             "/admin/**",
             "/WEB-INF/**",
-            "/api/user/check/email/**"
+            "/api/user/check/email/**",
+            "/oauth2/authorization/**",
+            "/login/oauth2/code/**"
     );
 
     /**
@@ -36,7 +39,8 @@ public class Constant {
     public static final List<String> NO_FILTER_URLS = List.of(
             "/api/user/login",
             "/api/user/signup",
-            "/oauth2/authorization"
+            "/oauth2/authorization",
+            "/login/oauth2"
 //            "/admin",
 //            "/WEB-INF"
     );

@@ -1,7 +1,7 @@
 package com.mealKit.backend.config;
 
 import com.mealKit.backend.interceptor.UserPidResolveInterceptor;
-import com.mealKit.backend.interceptor.UserPidResolver;
+import com.mealKit.backend.resolver.UserPidResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -47,7 +47,7 @@ public class AppConfig extends WebMvcConfigurationSupport {
     @Override
     public void addCorsMappings(CorsRegistry corsRegistry) {
         corsRegistry.addMapping("/**")
-                .allowedOrigins("https://www.mealshop.shop", "http://localhost:3000")
+                .allowedOrigins("https://www.mealshop.shop","https://mealshop-shop.vercel.app", "http://localhost:3000")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .exposedHeaders("*")
                 .allowCredentials(true);

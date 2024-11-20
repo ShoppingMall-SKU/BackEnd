@@ -2,21 +2,19 @@ package com.mealKit.backend.controller;
 
 
 
-import com.mealKit.backend.dto.UserDetailDTO;
-import com.mealKit.backend.dto.UserLoginDTO;
-import com.mealKit.backend.dto.UserSignUpDTO;
-import com.mealKit.backend.dto.UserSocialSignUpDTO;
+import com.mealKit.backend.dto.request.UserLoginRequestDto;
+import com.mealKit.backend.dto.response.UserDetailResponseDTO;
+import com.mealKit.backend.dto.request.UserSignUpRequestDTO;
+import com.mealKit.backend.dto.request.UserSocialSignUpRequestDTO;
 import com.mealKit.backend.exception.ResponseDto;
-import com.mealKit.backend.interceptor.Pid;
+import com.mealKit.backend.annotation.Pid;
 import com.mealKit.backend.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 @RestController
@@ -28,7 +26,7 @@ public class UserController {
 
     // 소셜 로그인
     @PutMapping("/social/signup/{email}")
-    public ResponseDto<String> socialSignup(@PathVariable String email, @RequestBody @Valid UserSocialSignUpDTO socialDto) {
+    public ResponseDto<String> socialSignup(@PathVariable String email, @RequestBody @Valid UserSocialSignUpRequestDTO socialDto) {
         return ResponseDto.ok(String.valueOf(userService.socialSignUp(email, socialDto)));
     }
 
@@ -69,7 +67,7 @@ public class UserController {
 
     // 프로필 조회 목적
     @GetMapping("/info")
-    public ResponseDto<UserDetailDTO> getUserDetail(@Pid String pid, HttpServletResponse response) {
+    public ResponseDto<UserDetailResponseDTO> getUserDetail(@Pid String pid, HttpServletResponse response) {
         log.info(pid);
 //        response.setHeader("content-type", "application/json");
         return ResponseDto.ok(userService.getUserByPid(
@@ -84,13 +82,13 @@ public class UserController {
 
     // 폼 회원가입
     @PostMapping("/signup")
-    public ResponseDto<String> signUp(@RequestBody @Valid UserSignUpDTO userSignUpDTO) {
+    public ResponseDto<String> signUp(@RequestBody @Valid UserSignUpRequestDTO userSignUpDTO) {
         userService.signUp(userSignUpDTO);
         return ResponseDto.ok("userService.signUp");
     }
 
     @PostMapping("/login")
-    public ResponseDto<String> login(@RequestBody UserLoginDTO userLoginDTO) {
+    public ResponseDto<String> login(@RequestBody UserLoginRequestDto userLoginDTO) {
         //log.info("id : {}, pw : {}" , userLoginDTO.getEmail(), userLoginDTO.getPassword());
         return ResponseDto.ok(userService.login(
                 userLoginDTO

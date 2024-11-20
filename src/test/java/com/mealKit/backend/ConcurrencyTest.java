@@ -3,7 +3,7 @@ package com.mealKit.backend;
 import com.mealKit.backend.domain.Product;
 import com.mealKit.backend.exception.CommonException;
 import com.mealKit.backend.exception.ErrorCode;
-import com.mealKit.backend.redis.RedissonLockStockFacade;
+import com.mealKit.backend.redisson.RedissonLockStockFacade;
 import com.mealKit.backend.repository.ProductRepository;
 import com.mealKit.backend.service.CartService;
 import com.mealKit.backend.service.OrderingService;

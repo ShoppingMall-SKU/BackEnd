@@ -30,6 +30,9 @@ public class Product {
     @Column(name = "price")
     private Integer price;
 
+    @Column(name = "discount_price")
+    private Long discountPrice;
+
     @Column(name = "img")
     private String img;
 
@@ -56,8 +59,6 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private Set<OrderDetail> orderDetails = new LinkedHashSet<>();
 
-    @PreUpdate
-    public void preUpdate() {this.createDate = LocalDateTime.now();}
 
     @Builder
     public Product(String name,
@@ -79,5 +80,16 @@ public class Product {
         this.createDate = create_date;
         this.brand = brand;
         this.status = status;
+        this.discountPrice = (long) (this.price * this.sale * 0.01);
+    }
+
+    @PreUpdate
+    public void preUpdate() {this.createDate = LocalDateTime.now();}
+    /**
+     * sale 이나 price 가 업데이트되면 자동 업데이트
+     */
+    @PrePersist
+    public void updateDiscountPrice() {
+        this.discountPrice = (long) (this.price * this.sale * 0.01);
     }
 }

@@ -1,6 +1,5 @@
-package com.mealKit.backend.dto;
+package com.mealKit.backend.dto.request;
 
-import com.mealKit.backend.domain.Product;
 import com.mealKit.backend.domain.enums.ProductStatus;
 import lombok.Data;
 import lombok.Getter;
@@ -11,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Data
 @NoArgsConstructor
-public class ProductPostDto {
+public class ProductPostRequestDto {
 
     private String name;
 

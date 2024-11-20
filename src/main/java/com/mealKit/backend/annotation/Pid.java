@@ -1,4 +1,4 @@
-package com.mealKit.backend.interceptor;
+package com.mealKit.backend.annotation;
 
 import java.lang.annotation.*;
 

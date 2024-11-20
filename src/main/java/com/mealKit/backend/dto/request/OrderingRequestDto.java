@@ -1,4 +1,4 @@
-package com.mealKit.backend.dto;
+package com.mealKit.backend.dto.request;
 
 
 
@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class OrderingInfoDTO {
+public class OrderingRequestDto {
     @NotBlank(message = "수령인은 필수 입력입니다.")
     private String receiverName;
 

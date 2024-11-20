@@ -1,4 +1,4 @@
-package com.mealKit.backend.jwt;
+package com.mealKit.backend.filter;
 
 
 import com.mealKit.backend.domain.User;
@@ -6,8 +6,9 @@ import com.mealKit.backend.domain.enums.ProviderType;
 import com.mealKit.backend.domain.enums.UserRole;
 import com.mealKit.backend.exception.CommonException;
 import com.mealKit.backend.exception.ErrorCode;
+import com.mealKit.backend.jwt.JwtUtil;
 import com.mealKit.backend.oauth2.CustomOAuth2User;
-import com.mealKit.backend.redis.RedisService;
+import com.mealKit.backend.service.RedisService;
 import com.mealKit.backend.repository.UserRepository;
 import com.mealKit.backend.security.Constant;
 import io.jsonwebtoken.JwtException;

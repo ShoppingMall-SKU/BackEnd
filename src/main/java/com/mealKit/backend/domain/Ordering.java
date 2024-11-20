@@ -46,7 +46,7 @@ public class Ordering {
 
     @Setter
     @Column(name = "total_price")
-    private Integer totalPrice;
+    private Long totalPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_pid")
@@ -57,7 +57,7 @@ public class Ordering {
                     String receiverPhone,
                     String receiverAddress,
                     String message, LocalDate orderDate,
-                    Integer totalPrice,
+                    Long totalPrice,
                     User user) {
         this.receiverName = receiverName;
         this.receiverPhone = receiverPhone;

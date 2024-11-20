@@ -35,8 +35,8 @@ public class User {
     private String email;
 
     @Setter
-    @Column(name = "address")
-    private String address;         // 우편 번호 zipcode
+    @Column(name = "zipcode")
+    private String zipcode;         // 우편 번호 zipcode
 
     @Setter
     private String streetAddress;   // 지번 주소
@@ -61,32 +61,21 @@ public class User {
     @Column(name = "use_yn")
     private String useYN;
 
-    @Builder(toBuilder = true)
-    public User(String pid, String name, String password, String phone, String email, String address, UserRole role, ProviderType providerType, String refreshToken, String useYN, String streetAddress, String detailAddress) {
+    @Builder
+    public User(String pid, String name, String password, String phone, String email, String zipcode, UserRole role, ProviderType providerType, String streetAddress, String detailAddress) {
         this.pid = pid;
         this.name = name;
         this.password = password;
         this.phone = phone;
         this.email = email;
-        this.address = address;
+        this.zipcode = zipcode;
         this.role = role;
         this.providerType = providerType;
-        this.refreshToken = refreshToken;
-        this.useYN = useYN;
+        this.streetAddress = streetAddress;
+        this.detailAddress = detailAddress;
+        this.useYN = "Y";
     }
 
-    @Builder
-    public User(String name, String password, String phone, String email, String address, UserRole role, String refreshToken) {
-        this.name = name;
-        this.password = password;
-        this.phone = phone;
-        this.email = email;
-        this.address = address;
-        this.role = role;
-        this.refreshToken = refreshToken;
-        this.useYN = "Y";
-        generatePID();
-    }
 
     @PrePersist
     private void generatePID() {

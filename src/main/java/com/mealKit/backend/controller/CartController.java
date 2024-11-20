@@ -1,15 +1,12 @@
 package com.mealKit.backend.controller;
 
-
-import com.mealKit.backend.dto.CartDto;
-import com.mealKit.backend.interceptor.Pid;
+import com.mealKit.backend.annotation.Pid;
 import com.mealKit.backend.service.CartService;
-import com.mealKit.backend.dto.CartUserInfoDto;
+import com.mealKit.backend.dto.response.CartResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -26,8 +23,8 @@ public class CartController {
 //    }
 
     @GetMapping("/user") // test완
-    public ResponseEntity<List<CartUserInfoDto>> getCartListByUserId(@Pid String pid){
-        List<CartUserInfoDto> cartList = cartService.getList(pid);
+    public ResponseEntity<List<CartResponseDto>> getCartListByUserId(@Pid String pid){
+        List<CartResponseDto> cartList = cartService.getList(pid);
         return ResponseEntity.ok(cartList);
     }
 //    // 수량 변경 메소드

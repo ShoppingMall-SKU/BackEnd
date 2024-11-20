@@ -1,11 +1,11 @@
 package com.mealKit.backend.security;
 
-import com.mealKit.backend.jwt.JwtFilter;
+import com.mealKit.backend.filter.JwtFilter;
 import com.mealKit.backend.jwt.JwtUtil;
 import com.mealKit.backend.oauth2.CustomOAuth2UserService;
 import com.mealKit.backend.oauth2.OAuth2LoginFailureHandler;
 import com.mealKit.backend.oauth2.OAuth2LoginSuccessHandler;
-import com.mealKit.backend.redis.RedisService;
+import com.mealKit.backend.service.RedisService;
 import com.mealKit.backend.repository.UserRepository;
 import com.mealKit.backend.service.LoginService;
 import lombok.RequiredArgsConstructor;
@@ -75,7 +75,12 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-           .requestMatchers(HttpMethod.GET, "/api/product/**");
+           .requestMatchers(HttpMethod.GET, "/api/product/**")
+                .requestMatchers("/swagger-ui.html")
+                .requestMatchers("/api-docs")
+                .requestMatchers("/api/user/check/email/**")
+//                .requestMatchers("/oauth2/authorization/**")
+                .requestMatchers("/swagger-ui/**");
     }
 
     @Bean

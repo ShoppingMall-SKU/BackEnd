@@ -5,6 +5,7 @@ import com.mealKit.backend.exception.ErrorCode;
 
 public enum ProviderType {
     GOOGLE("구글"),
+    NAVER("네이버"),
     NORMAL("일반");
 
     private String pt;

@@ -1,4 +1,4 @@
-package com.mealKit.backend.dto;
+package com.mealKit.backend.dto.response;
 
 import com.mealKit.backend.domain.Ordering;
 import lombok.Data;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Data
 @NoArgsConstructor
-public class PaymentDTO {
+public class PaymentResponseDto {
 
     private String method;
 
